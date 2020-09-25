@@ -173,10 +173,6 @@ public class PhoneDaoImplTest extends AbstractTest {
         Assert.assertEquals(3, actualA7.size());
     }
 
-    @Test
-    public void getMostExpensive_Limi1() {
-
-    }
 
     private void insertPhones(PhoneDao phoneDao) {
         Phone iphoneX = (Phone) Phones.iphoneX.clone();
