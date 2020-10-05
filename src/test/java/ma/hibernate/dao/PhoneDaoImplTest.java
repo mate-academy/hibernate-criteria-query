@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import ma.hibernate.model.Phone;
-import ma.hibernate.util.HibernateUtil;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -209,5 +208,4 @@ public class PhoneDaoImplTest extends AbstractTest {
         Assert.assertEquals(phone.getModel(), actual.getModel());
         Assert.assertEquals(phone.getCountryManufactured(), actual.getCountryManufactured());
     }
-
 }
