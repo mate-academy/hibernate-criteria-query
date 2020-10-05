@@ -7,7 +7,6 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import ma.hibernate.exeptions.DataProcessingException;
 import ma.hibernate.model.Phone;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -32,7 +31,7 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
             if (transaction != null) {
                 transaction.rollback();
             }
-            throw new DataProcessingException("Can't create phone", e);
+            throw new RuntimeException("Can't create phone", e);
         } finally {
             if (session != null) {
                 session.close();
@@ -51,7 +50,7 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
             criteriaQuery.select(phoneRoot).where(predicateList.toArray(new Predicate[0]));
             return session.createQuery(criteriaQuery).getResultList();
         } catch (Exception e) {
-            throw new DataProcessingException("Can't find all Phone by params", e);
+            throw new RuntimeException("Can't find all Phone by params", e);
         }
     }
 }
