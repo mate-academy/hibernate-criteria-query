@@ -7,6 +7,10 @@ import org.hibernate.Transaction;
 public abstract class AbstractDao<T> {
     protected final SessionFactory factory;
 
+    protected AbstractDao(SessionFactory sessionFactory) {
+        this.factory = sessionFactory;
+    }
+
     T create(T entity) {
         Transaction transaction = null;
         Session session = null;
@@ -26,9 +30,5 @@ public abstract class AbstractDao<T> {
                 session.close();
             }
         }
-    }
-
-    protected AbstractDao(SessionFactory sessionFactory) {
-        this.factory = sessionFactory;
     }
 }
