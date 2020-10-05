@@ -3,7 +3,6 @@ package ma.hibernate.dao;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
@@ -49,8 +48,7 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
             CriteriaQuery<Phone> phoneQuery = criteriaBuilder.createQuery(Phone.class);
             Root<Phone> phoneRoot = phoneQuery.from(Phone.class);
             List<Predicate> predicateListAnd = new ArrayList<>();
-            Set<Map.Entry<String, String[]>> entreis = params.entrySet();
-            for (Map.Entry<String, String[]> entry : entreis) {
+            for (Map.Entry<String, String[]> entry : params.entrySet()) {
                 List<Predicate> predicateListOr = new ArrayList<>();
                 for (String parameter : entry.getValue()) {
                     predicateListOr.add(criteriaBuilder
