@@ -27,7 +27,6 @@ public class PhoneDaoImplTest extends AbstractTest {
         insertPhones(phoneDao);
     }
 
-
     @Test
     public void findAll_EmptyParams() {
         PhoneDao phoneDao = new PhoneDaoImpl(getSessionFactory());
