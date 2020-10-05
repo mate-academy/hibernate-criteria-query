@@ -31,7 +31,7 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
             if (transaction != null) {
                 transaction.rollback();
             }
-            throw new RuntimeException("Phone " + phone + "wasn't created", e);
+            throw new RuntimeException ("Phone " + phone + "wasn't created", e);
         } finally {
             if (session != null) {
                 session.close();
@@ -41,7 +41,6 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
 
     @Override
     public List<Phone> findAll(Map<String, String[]> params) {
-
         try (Session session = factory.openSession()) {
             CriteriaBuilder cb = session.getCriteriaBuilder();
             CriteriaQuery<Phone> phoneQuery = cb.createQuery(Phone.class);
@@ -57,7 +56,7 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
             phoneQuery.select(root).where(andPredicateList.toArray(new Predicate[0]));
             return session.createQuery(phoneQuery).getResultList();
         } catch (Exception e) {
-            throw new RuntimeException("Can't get list of all phones");
+            throw new RuntimeException ("Can't get list of all phones");
         }
     }
 }
