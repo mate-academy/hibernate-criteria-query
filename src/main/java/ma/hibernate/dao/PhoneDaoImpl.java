@@ -33,7 +33,9 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
             }
             throw new RuntimeException("Can`t create phone entity ", ex);
         } finally {
-            session.close();
+            if (session != null) {
+                session.close();
+            }
         }
     }
 
@@ -60,7 +62,9 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
             }
             throw new RuntimeException("Can`t find entities ", exception);
         } finally {
-            session.close();
+            if (session != null) {
+                session.close();
+            }
         }
     }
 }
