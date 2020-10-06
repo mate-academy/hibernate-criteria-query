@@ -2,11 +2,11 @@ package ma.hibernate.dao;
 
 import java.util.List;
 import java.util.Map;
-import ma.hibernate.model.Phone;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import ma.hibernate.model.Phone;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
