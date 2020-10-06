@@ -23,7 +23,7 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
         Session session = null;
         Transaction transaction = null;
         try {
-            session = super.factory.openSession();
+            session = factory.openSession();
             transaction = session.beginTransaction();
             session.persist(phone);
             transaction.commit();
@@ -53,7 +53,7 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
             criteriaQuery.select(root).where(predicates.toArray(new Predicate[]{}));
             return session.createQuery(criteriaQuery).getResultList();
         } catch (Exception e) {
-            throw new RuntimeException("Can not get list of phones");
+            throw new RuntimeException("Can not get list of phones", e);
         }
     }
 }
