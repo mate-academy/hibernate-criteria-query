@@ -1,17 +1,16 @@
 package ma.hibernate.dao;
 
-import ma.hibernate.model.Phone;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
-
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import ma.hibernate.model.Phone;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 
 public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
     public PhoneDaoImpl(SessionFactory sessionFactory) {
