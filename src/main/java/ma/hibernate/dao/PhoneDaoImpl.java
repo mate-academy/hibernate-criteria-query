@@ -43,9 +43,7 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
 
     @Override
     public List<Phone> findAll(Map<String, String[]> params) {
-        Session session = null;
-        try {
-            session = factory.openSession();
+        try (Session session = factory.openSession();) {
             CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
             CriteriaQuery<Phone> criteriaQuery = criteriaBuilder.createQuery(Phone.class);
             Root<Phone> root = criteriaQuery.from(Phone.class);
@@ -67,10 +65,6 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
             return query.getResultList();
         } catch (Exception e) {
             throw new RuntimeException("Can't find phones", e);
-        } finally {
-            if (session != null) {
-                session.close();
-            }
         }
     }
 }
