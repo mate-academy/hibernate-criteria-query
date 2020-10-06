@@ -43,31 +43,34 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
 
     @Override
     public List<Phone> findAll(Map<String, String[]> params) {
-        List<Phone> list = null;
-        Session session = factory.openSession();
+        Session session = null;
         try {
-            CriteriaBuilder cb = session.getCriteriaBuilder();
-            CriteriaQuery<Phone> q = cb.createQuery(Phone.class);
-            Root<Phone> root = q.from(Phone.class);
+            session = factory.openSession();
+            CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+            CriteriaQuery<Phone> criteriaQuery = criteriaBuilder.createQuery(Phone.class);
+            Root<Phone> root = criteriaQuery.from(Phone.class);
             List<Predicate> andPredicate = new ArrayList<>();
             Predicate finalPredicate = null;
             for (String key : params.keySet()) {
                 List<Predicate> orPredicate = new ArrayList<>();
                 for (String value : params.get(key)) {
                     Path<Object> objectPath = root.get(key);
-                    orPredicate.add(cb.equal(objectPath, value));
+                    orPredicate.add(criteriaBuilder.equal(objectPath, value));
                 }
                 Predicate oneCriterionCombineOrPredicate =
-                        cb.or(orPredicate.toArray(new Predicate[]{}));
+                        criteriaBuilder.or(orPredicate.toArray(new Predicate[]{}));
                 andPredicate.add(oneCriterionCombineOrPredicate);
             }
-            finalPredicate = cb.and(andPredicate.toArray(new Predicate[]{}));
-            Query<Phone> query = session.createQuery(q
+            finalPredicate = criteriaBuilder.and(andPredicate.toArray(new Predicate[]{}));
+            Query<Phone> query = session.createQuery(criteriaQuery
                     .where(finalPredicate));
-            list = query.getResultList();
+            return query.getResultList();
         } catch (Exception e) {
             throw new RuntimeException("Can't find phones", e);
+        } finally {
+            if (session != null) {
+                session.close();
+            }
         }
-        return list;
     }
 }
