@@ -44,21 +44,21 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
         try {
             session = factory.openSession();
             transaction = session.beginTransaction();
-            CriteriaBuilder cb = session.getCriteriaBuilder();
-            CriteriaQuery<Phone> q = cb.createQuery(Phone.class);
-            Root<Phone> root = q.from(Phone.class);
+            CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+            CriteriaQuery<Phone> criteriaQuery = criteriaBuilder.createQuery(Phone.class);
+            Root<Phone> root = criteriaQuery.from(Phone.class);
             List<Predicate> predicates = new LinkedList();
             for (Map.Entry<String, String[]> entry : params.entrySet()) {
                 predicates.add(root.get(entry.getKey()).in(entry.getValue()));
             }
-            Predicate predicate = cb.and(predicates.toArray(new Predicate[0]));
-            q.select(root).where(predicate);
-            return session.createQuery(q).getResultList();
-        } catch (Exception ex) {
+            Predicate predicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+            criteriaQuery.select(root).where(predicate);
+            return session.createQuery(criteriaQuery).getResultList();
+        } catch (Exception exception) {
             if (transaction != null) {
                 transaction.rollback();
             }
-            throw new RuntimeException("Can`t find entities ", ex);
+            throw new RuntimeException("Can`t find entities ", exception);
         } finally {
             session.close();
         }
