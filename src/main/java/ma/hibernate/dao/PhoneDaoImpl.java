@@ -17,11 +17,6 @@ public class PhoneDaoImpl extends AbstractDao<Phone> implements PhoneDao {
     }
 
     @Override
-    public Phone create(Phone phone) {
-        return super.create(phone);
-    }
-
-    @Override
     public List<Phone> findAll(Map<String, String[]> params) {
         try (Session session = factory.openSession()) {
             CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
@@ -34,7 +29,7 @@ public class PhoneDaoImpl extends AbstractDao<Phone> implements PhoneDao {
             criteriaQuery.select(root).where(predicates.toArray(new Predicate[0]));
             return session.createQuery(criteriaQuery).getResultList();
         } catch (Exception e) {
-            throw new RuntimeException("Can't get list of phones");
+            throw new RuntimeException("Can't get list of phones", e);
         }
     }
 }

@@ -11,7 +11,7 @@ public abstract class AbstractDao<T> {
         this.factory = sessionFactory;
     }
 
-    T create(T entity) {
+    public T create(T entity) {
         Session session = null;
         Transaction transaction = null;
         try {
