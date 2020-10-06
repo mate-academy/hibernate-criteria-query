@@ -10,6 +10,7 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import lombok.extern.log4j.Log4j;
 import ma.hibernate.model.Phone;
+import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -23,15 +24,21 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
     @Override
     public Phone create(Phone phone) {
         Transaction transaction = null;
-        try (Session session = factory.openSession()) {
+        Session session = null;
+        try {
+            session = factory.openSession();
             transaction = session.beginTransaction();
             session.persist(phone);
             transaction.commit();
-        } catch (Exception e) {
+        } catch (HibernateException e) {
             if (transaction != null) {
                 transaction.rollback();
             }
             throw new RuntimeException("Couldn't insert phone entity " + phone.toString(), e);
+        } finally {
+            if (session != null) {
+                session.close();
+            }
         }
         return phone;
     }
