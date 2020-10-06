@@ -45,19 +45,19 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
     public List<Phone> findAll(Map<String, String[]> params) {
         try (Session session = factory.openSession()) {
             CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
-            CriteriaQuery<Phone> phoneQuery = criteriaBuilder.createQuery(Phone.class);
-            Root<Phone> phoneRoot = phoneQuery.from(Phone.class);
-            List<Predicate> predicateListAnd = new ArrayList<>();
+            CriteriaQuery<Phone> query = criteriaBuilder.createQuery(Phone.class);
+            Root<Phone> root = query.from(Phone.class);
+            List<Predicate> andPredicates = new ArrayList<>();
             for (Map.Entry<String, String[]> entry : params.entrySet()) {
-                List<Predicate> predicateListOr = new ArrayList<>();
+                List<Predicate> orPredicates = new ArrayList<>();
                 for (String parameter : entry.getValue()) {
-                    predicateListOr.add(criteriaBuilder
-                            .equal(phoneRoot.get(entry.getKey()), parameter));
+                    orPredicates.add(criteriaBuilder
+                            .equal(root.get(entry.getKey()), parameter));
                 }
-                predicateListAnd.add(criteriaBuilder.or(predicateListOr.toArray(new Predicate[0])));
+                andPredicates.add(criteriaBuilder.or(orPredicates.toArray(new Predicate[0])));
             }
-            phoneQuery.select(phoneRoot).where(predicateListAnd.toArray(new Predicate[0]));
-            return session.createQuery(phoneQuery).getResultList();
+            query.select(root).where(andPredicates.toArray(new Predicate[0]));
+            return session.createQuery(query).getResultList();
 
         } catch (Exception e) {
             throw new DataProcessingException("Can't find all phones", e);
