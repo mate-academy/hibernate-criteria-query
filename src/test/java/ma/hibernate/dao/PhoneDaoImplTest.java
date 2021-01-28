@@ -9,7 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class PhoneDaoImplTest extends AbstractTest {
-    Map<String, String[]> params;
+    private Map<String, String[]> params;
 
     @Before
     public void setUp() {
