@@ -57,8 +57,8 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
                 andPredicates.add(cb.or(orPredicates.toArray(new Predicate[]{})));
             }
             Predicate finalPredicate = cb.and(andPredicates.toArray(new Predicate[]{}));
-            query.select(root).where(finalPredicate);
-            return session.createQuery(query).getResultList();
+            CriteriaQuery<Phone> criteriaQuery = query.select(root).where(finalPredicate);
+            return session.createQuery(criteriaQuery).getResultList();
         } catch (Exception e) {
             throw new RuntimeException("Can't get all Pnones from DB", e);
         }
