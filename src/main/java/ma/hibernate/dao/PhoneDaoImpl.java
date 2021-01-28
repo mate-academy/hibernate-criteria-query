@@ -61,7 +61,7 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
             CriteriaQuery<Phone> criteriaQuery = query.select(root).where(finalPredicate);
             return session.createQuery(criteriaQuery).getResultList();
         } catch (Exception e) {
-            throw new RuntimeException("Can't get all Pnones from DB", e);
+            throw new RuntimeException("Can't get all Pnones from DB with parameters " + params, e);
         }
     }
 }
