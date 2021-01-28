@@ -3,14 +3,14 @@ package ma.hibernate.dao;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import ma.hibernate.model.Phone;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import ma.hibernate.model.Phone;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 
 public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
     public PhoneDaoImpl(SessionFactory sessionFactory) {
@@ -56,8 +56,8 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
                 finalPredicates.add(criteriaBuilder.or(predicates
                         .toArray(Predicate[]::new)));
             }
-            query.select(root).where(finalPredicates
-                    .toArray(Predicate[]::new));
+            Predicate predicate = criteriaBuilder.and(finalPredicates.toArray(Predicate[]::new));
+            query.select(root).where(predicate);
             return session.createQuery(query).getResultList();
         } catch (Exception e) {
             throw new RuntimeException("Can't find all the phones", e);
