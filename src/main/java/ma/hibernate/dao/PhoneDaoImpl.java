@@ -45,7 +45,6 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
             CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
             CriteriaQuery<Phone> query = criteriaBuilder.createQuery(Phone.class);
             Root<Phone> root = query.from(Phone.class);
-            //root.in(array); IGNORE THIS COMMENT PLEASE. I want to try optimize it later,now solvd
             List<Predicate> andPredicates = new ArrayList<>();
             for (Map.Entry<String, String[]> entry : params.entrySet()) {
                 String[] values = entry.getValue();
@@ -58,9 +57,8 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
                         orPredicates.toArray(new Predicate[]{}));
                 andPredicates.add(andPredicate);
             }
-            CriteriaQuery<Phone> where = query.select(root).where(
-                    andPredicates.toArray(new Predicate[0]));
-            return session.createQuery(where).getResultList();
+            CriteriaQuery<Phone> selectQuery = query.select(root).where(andPredicates.toArray(new Predicate[0]));
+            return session.createQuery(selectQuery).getResultList();
         } catch (Exception e) {
             throw new RuntimeException("can't find all phones with params " + params, e);
         }
