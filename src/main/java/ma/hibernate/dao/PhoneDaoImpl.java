@@ -42,32 +42,26 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
 
     @Override
     public List<Phone> findAll(Map<String, String[]> params) {
-        Session session = null;
-        try {
-            session = factory.openSession();
+        try (Session session = factory.openSession()) {
             CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
             CriteriaQuery<Phone> query = criteriaBuilder.createQuery(Phone.class);
             Root<Phone> root = query.from(Phone.class);
-            List<Predicate> predicatesGroupOfOr = new ArrayList<>();
+            List<Predicate> andPredicates = new ArrayList<>();
             for (Map.Entry<String, String[]> stringEntry : params.entrySet()) {
                 List<Predicate> predicatesOr = new ArrayList<>();
                 for (int i = 0; i < stringEntry.getValue().length; i++) {
                     predicatesOr.add(criteriaBuilder.equal(root.get(stringEntry.getKey()),
                             stringEntry.getValue()[i]));
                 }
-                predicatesGroupOfOr.add(criteriaBuilder.or(predicatesOr
+                andPredicates.add(criteriaBuilder.or(predicatesOr
                         .toArray(Predicate[]::new)));
             }
-            Predicate predicate = criteriaBuilder.and(predicatesGroupOfOr
+            Predicate predicate = criteriaBuilder.and(andPredicates
                     .toArray(Predicate[]::new));
             query.select(root).where(predicate);
             return session.createQuery(query).getResultList();
         } catch (Exception e) {
             throw new RuntimeException("Can't find all phone with this params ", e);
-        } finally {
-            if (session != null) {
-                session.close();
-            }
         }
     }
 }
