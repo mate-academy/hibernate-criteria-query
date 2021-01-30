@@ -1,5 +1,6 @@
 package ma.hibernate.dao;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -44,16 +45,11 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
             CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
             CriteriaQuery<Phone> criteriaQuery = criteriaBuilder.createQuery(Phone.class);
             Root<Phone> root = criteriaQuery.from(Phone.class);
-            Predicate predicate = criteriaBuilder.and();
+            List<Predicate> predicates = new ArrayList<>();
             for (Map.Entry<String, String[]> entry : params.entrySet()) {
-                CriteriaBuilder.In<String> parametersRange
-                        = criteriaBuilder.in(root.get(entry.getKey()));
-                for (String value : entry.getValue()) {
-                    parametersRange.value(value);
-                }
-                predicate = criteriaBuilder.and(predicate, parametersRange);
+                predicates.add(root.get(entry.getKey()).in((Object[]) entry.getValue()));
             }
-            criteriaQuery.select(root).where(predicate);
+            criteriaQuery.select(root).where(predicates.toArray(new Predicate[0]));
             return session.createQuery(criteriaQuery).getResultList();
         } catch (Exception e) {
             throw new RuntimeException("Have not got all cellphone ", e);
