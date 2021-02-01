@@ -53,6 +53,8 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
             }
             query.select(root).where(criteriaBuilder.and(predicates.toArray(Predicate[]::new)));
             return session.createQuery(query).getResultList();
+        } catch (Exception e) {
+            throw new RuntimeException("Unable to create query", e);
         }
     }
 }
