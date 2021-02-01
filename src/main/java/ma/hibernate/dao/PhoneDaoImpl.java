@@ -1,6 +1,7 @@
 package ma.hibernate.dao;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -45,20 +46,19 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
             CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
             CriteriaQuery<Phone> query = criteriaBuilder.createQuery(Phone.class);
             Root<Phone> phoneRoot = query.from(Phone.class);
-            List<Predicate> andPredicateList = new ArrayList<>();
+            List<Predicate> predicate = new ArrayList<>();
             for (Map.Entry<String, String[]> entry : parameters.entrySet()) {
-                String[] stringArray = entry.getValue();
-                List<Predicate> orPredicateList = new ArrayList<>();
-                for (String parameter : stringArray) {
-                    Predicate orPredicate =
-                            criteriaBuilder.equal(phoneRoot.get(entry.getKey()), parameter);
-                    orPredicateList.add(orPredicate);
+                CriteriaBuilder.In<String> inPredicate =
+                        criteriaBuilder.in(phoneRoot.get(entry.getKey()));
+                List<String> stringValues = Arrays.asList(entry.getValue());
+                for (String parameter : stringValues) {
+                    inPredicate.value(parameter);
                 }
-                Predicate andPredicate =
-                        criteriaBuilder.or(orPredicateList.toArray(new Predicate[]{}));
-                andPredicateList.add(andPredicate);
+                Predicate tempPredicate = criteriaBuilder.and(inPredicate);
+                predicate.add(tempPredicate);
             }
-            query.select(phoneRoot).where(andPredicateList.toArray(new Predicate[]{}));
+            Predicate addPredicate = criteriaBuilder.and(predicate.toArray(new Predicate[]{}));
+            query.select(phoneRoot).where(addPredicate);
             return session.createQuery(query).getResultList();
         } catch (Exception e) {
             throw new RuntimeException("Something went wrong. "
