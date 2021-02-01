@@ -53,7 +53,7 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
             criteriaQuery.select(phone).where(predicate);
             return session.createQuery(criteriaQuery).getResultList();
         } catch (Exception ex) {
-            throw new RuntimeException("Can`t find all phones", ex);
+            throw new DataProcessingException("Can`t find all phones", ex);
         }
     }
 }
