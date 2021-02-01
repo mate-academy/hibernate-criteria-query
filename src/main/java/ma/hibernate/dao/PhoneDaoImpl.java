@@ -2,15 +2,14 @@ package ma.hibernate.dao;
 
 import java.util.List;
 import java.util.Map;
-import ma.hibernate.model.Phone;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
-
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import ma.hibernate.model.Phone;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 
 public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
     public PhoneDaoImpl(SessionFactory sessionFactory) {
@@ -42,17 +41,19 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
     @Override
     public List<Phone> findAll(Map<String, String[]> params) {
         try (Session session = factory.openSession()) {
-            CriteriaBuilder cb = session.getCriteriaBuilder();
-            CriteriaQuery<Phone> q = cb.createQuery(Phone.class);
-            Root<Phone> root = q.from(Phone.class);
-            Predicate predicate = cb.and();
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+            CriteriaQuery<Phone> query = builder.createQuery(Phone.class);
+            Root<Phone> root = query.from(Phone.class);
+            Predicate predicate = builder.and();
 
-            for (String key : params.keySet()) {
-                predicate = cb.and(predicate, root.get(key).in(params.get(key)));
+            for (Map.Entry<String, String[]> entry : params.entrySet()) {
+                predicate = builder.and(predicate, root.get(entry.getKey()).in(entry.getValue()));
             }
 
-            q.select(root).where(predicate);
-            return session.createQuery(q).getResultList();
+            query.select(root).where(predicate);
+            return session.createQuery(query).getResultList();
+        } catch (Exception e) {
+            throw new RuntimeException("Can't find all phones", e);
         }
     }
 }
