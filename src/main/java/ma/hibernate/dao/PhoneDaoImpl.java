@@ -30,7 +30,7 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
             if (transaction != null) {
                 transaction.rollback();
             }
-            throw new RuntimeException("Cant insert phone in db"
+            throw new RuntimeException("Can`t insert phone in db"
                     + phone, e);
         } finally {
             if (session != null) {
@@ -57,7 +57,8 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
             getAllPhonesQuery.select(root).where(predicate);
             return session.createQuery(getAllPhonesQuery).getResultList();
         } catch (Exception e) {
-            throw new RuntimeException("Can't gael phones from DB", e);
+            throw new RuntimeException("Can't get  phones from DB by params — "
+                    + params, e);
         }
     }
 }
