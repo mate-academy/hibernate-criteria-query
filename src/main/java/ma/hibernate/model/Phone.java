@@ -73,7 +73,7 @@ public class Phone implements Cloneable {
         }
     }
 
-    public java.lang.String toString() {
+    public String toString() {
         return "Phone{"
             + "id=" + id
             + ", model='" + model + '\''
