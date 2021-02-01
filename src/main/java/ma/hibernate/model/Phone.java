@@ -73,7 +73,6 @@ public class Phone implements Cloneable {
         }
     }
 
-    @Override
     public String toString() {
         return "Phone{"
             + "id=" + id
