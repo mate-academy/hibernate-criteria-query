@@ -54,11 +54,11 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
                 }
                 predicates.add(predicateOfParameter);
             }
-            query.where(criteriaBuilder.and(predicates.toArray(Predicate[]::new)));
+            query.where(predicates.toArray(Predicate[]::new));
             return session.createQuery(query).getResultList();
         } catch (Exception e) {
-            throw new RuntimeException("Can't get list of all phones " +
-                    "by input parameters from DB", e);
+            throw new RuntimeException("Can't get list of all phones "
+                    + "by input parameters from DB", e);
         }
     }
 }
