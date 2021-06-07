@@ -57,7 +57,7 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
             query.where(resultPredicate);
             return session.createQuery(query).getResultList();
         } catch (Exception e) {
-            throw new RuntimeException("Can't get phones by params: ", e);
+            throw new RuntimeException("Can't get phones by params.", e);
         }
     }
 }
