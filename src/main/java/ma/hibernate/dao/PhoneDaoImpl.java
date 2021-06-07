@@ -46,10 +46,10 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
             CriteriaQuery<Phone> findAllQuery = criteriaBuilder.createQuery(Phone.class);
             Root<Phone> phoneRoot = findAllQuery.from(Phone.class);
 
-            CriteriaBuilder.In<Object> parameterPredicate;
             List<Predicate> predicateList = new ArrayList<>();
             for (Map.Entry<String, String[]> entry : params.entrySet()) {
-                parameterPredicate = criteriaBuilder.in(phoneRoot.get(entry.getKey()));
+                CriteriaBuilder.In<String> parameterPredicate = criteriaBuilder
+                        .in(phoneRoot.get(entry.getKey()));
                 for (String specificValues : entry.getValue()) {
                     parameterPredicate.value(specificValues);
                 }
@@ -58,7 +58,7 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
             findAllQuery.where(criteriaBuilder.and(predicateList.toArray(Predicate[]::new)));
             return session.createQuery(findAllQuery).getResultList();
         } catch (Exception e) {
-            throw new RuntimeException("Can't get all phones", e);
+            throw new RuntimeException("Can't get all phones with params " + params, e);
         }
     }
 }
