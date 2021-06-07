@@ -45,7 +45,6 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
             CriteriaQuery<Phone> query = cb.createQuery(Phone.class);
             Root<Phone> from = query.from(Phone.class);
             Predicate resultPredicate = cb.and();
-
             for (Map.Entry<String, String[]> entry : params.entrySet()) {
                 CriteriaBuilder.In<String> predicate = cb.in(from.get(entry.getKey()));
                 for (String value : entry.getValue()) {
@@ -53,8 +52,9 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
                 }
                 resultPredicate = cb.and(resultPredicate, predicate);
             }
-            query.where(resultPredicate);
-            return session.createQuery(query).getResultList();
+            return session.createQuery(query.where(resultPredicate)).getResultList();
+        } catch (Exception e) {
+            throw new RuntimeException("Can't find phones ", e);
         }
     }
 }
