@@ -12,6 +12,6 @@ params.put("countryManufactured", new String[]{"China"};
 params.put("producer", new String[]{"apple", "nokia", "samsung"};
 params.put("color", new String[]{"white", "red"};
 ```
-You need to find all phones that match the specified paramet![img.png](img.png)ers.
+You need to find all phones that match the specified parameters.
 
 #### [Try to avoid these common mistakes, while solving task](https://mate-academy.github.io/jv-program-common-mistakes/hibernate/criteria-query/criteria_query_checklist)
