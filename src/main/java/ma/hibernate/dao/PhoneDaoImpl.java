@@ -30,7 +30,7 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
             if (transaction != null) {
                 transaction.rollback();
             }
-            throw new RuntimeException("Can`t write phone: " + phone + " to DB.");
+            throw new RuntimeException("Can`t write phone: " + phone + " to DB.", e);
         } finally {
             if (session != null) {
                 session.close();
@@ -42,18 +42,18 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
     public List<Phone> findAll(Map<String, String[]> params) {
         try (Session session = factory.openSession()) {
             CriteriaBuilder cb = session.getCriteriaBuilder();
-            CriteriaQuery<Phone> query = cb.createQuery(Phone.class);
-            Root<Phone> phoneRoot = query.from(Phone.class);
+            CriteriaQuery<Phone> findAllPhonesQuery = cb.createQuery(Phone.class);
+            Root<Phone> phoneRoot = findAllPhonesQuery.from(Phone.class);
             Predicate combinedPredicate = cb.and();
-            for (Map.Entry<String, String[]> stringEntry : params.entrySet()) {
-                CriteriaBuilder.In<String> partOfPredicate =
-                        cb.in(phoneRoot.get(stringEntry.getKey()));
-                for (String parameterValue : stringEntry.getValue()) {
-                    partOfPredicate.value(parameterValue);
+            for (Map.Entry<String, String[]> entry : params.entrySet()) {
+                CriteriaBuilder.In<String> currentPredicate =
+                        cb.in(phoneRoot.get(entry.getKey()));
+                for (String parameterValue : entry.getValue()) {
+                    currentPredicate.value(parameterValue);
                 }
-                combinedPredicate = cb.and(combinedPredicate, partOfPredicate);
+                combinedPredicate = cb.and(combinedPredicate, currentPredicate);
             }
-            return session.createQuery(query.where(combinedPredicate)).getResultList();
+            return session.createQuery(findAllPhonesQuery.where(combinedPredicate)).getResultList();
         } catch (Exception e) {
             throw new RuntimeException("Can`t fetch data from DB.", e);
         }
