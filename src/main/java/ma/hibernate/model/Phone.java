@@ -4,10 +4,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Table;
 
 @Entity
-@Table(name = "phones")
 public class Phone implements Cloneable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,17 +15,6 @@ public class Phone implements Cloneable {
     private String color;
     private String os;
     private String countryManufactured;
-
-    public Phone(String model, String maker, String color, String os, String countryManufactured) {
-        this.model = model;
-        this.maker = maker;
-        this.color = color;
-        this.os = os;
-        this.countryManufactured = countryManufactured;
-    }
-
-    public Phone() {
-    }
 
     public Long getId() {
         return id;
