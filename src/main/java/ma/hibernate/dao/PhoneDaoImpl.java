@@ -1,5 +1,6 @@
 package ma.hibernate.dao;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -45,7 +46,7 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
             CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
             CriteriaQuery<Phone> query = criteriaBuilder.createQuery(Phone.class);
             Root<Phone> phoneRoot = query.from(Phone.class);
-            Predicate phonePredicate = criteriaBuilder.and();
+            List<Predicate> predicates = new ArrayList<>();
 
             for (Map.Entry<String, String[]> entry : params.entrySet()) {
                 CriteriaBuilder.In<Object> paramsPredicate =
@@ -53,10 +54,10 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
                 for (String value : entry.getValue()) {
                     paramsPredicate.value(value);
                 }
-                phonePredicate = criteriaBuilder.and(phonePredicate, paramsPredicate);
+                predicates.add(paramsPredicate);
             }
-
-            query.where(phonePredicate);
+            Predicate newPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+            query.where(newPredicate);
             return session.createQuery(query).getResultList();
         } catch (Exception e) {
             throw new DataProcessingException("Can't get phones by params from DB ", e);
