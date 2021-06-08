@@ -56,10 +56,13 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
             findByParamsQuery.where(allPredicates);
             return session.createQuery(findByParamsQuery).getResultList();
         } catch (Exception e) {
-            System.out.println("Exception while trying to get phones from db "
+            StringBuilder exceptionMessage = new StringBuilder();
+            exceptionMessage.append("Exception while trying to get phones from db "
                     + "by parameters:");
-            params.forEach((key, value) -> System.out.println(key + " : " + value));
-            throw new RuntimeException("Stack trace: ", e);
+            for (Map.Entry<String, String[]> entry : params.entrySet()) {
+                exceptionMessage.append("\n" + entry.getKey() + " : " + entry.getValue());
+            }
+            throw new RuntimeException(exceptionMessage.toString(), e);
         }
     }
 }
