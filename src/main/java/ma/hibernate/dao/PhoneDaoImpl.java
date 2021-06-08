@@ -1,6 +1,5 @@
 package ma.hibernate.dao;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -56,11 +55,7 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
             query.where(findAllPredicate);
             return session.createQuery(query).getResultList();
         } catch (Exception e) {
-            System.out.println("Can't find all phones with such parameters:\n");
-            for (Map.Entry<String, String[]> entry : params.entrySet()) {
-                System.out.println(entry.getKey() + Arrays.toString(entry.getValue()) + '\n');
-            }
-            throw new RuntimeException(e);
+            throw new RuntimeException("Can't find all phones by parameters in given map", e);
         }
     }
 }
