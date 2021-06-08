@@ -50,10 +50,12 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
             List<CriteriaBuilder.In<String>> predicatesArray = new ArrayList<>();
             if (!params.isEmpty()) {
                 for (String key : params.keySet()) {
-                    predicatesArray.add(criteriaBuilder.in(phoneRoot.get(key)));
+                    var predicate = criteriaBuilder.in(phoneRoot.get(key));
                     for (String value : params.get(key)) {
-                        predicatesArray.get(predicatesArray.size() - 1).value(value);
+                        predicate.value(value);
                     }
+                    predicatesArray.add(predicate);
+
                 }
             }
 
