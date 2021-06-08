@@ -51,7 +51,6 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
                 Arrays.stream(entry.getValue())
                         .forEach(criteria::value);
                 operationResult = cb.and(operationResult, criteria);
-
             }
             query.where(operationResult);
             return session.createQuery(query).getResultList();
