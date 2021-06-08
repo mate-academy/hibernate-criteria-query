@@ -1,5 +1,4 @@
 .idea/*
 *.iml
 target/*
-App.class
-util/*
+/src/main/java/ma/hibernate/util/
