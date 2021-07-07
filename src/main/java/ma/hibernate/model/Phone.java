@@ -4,6 +4,11 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import lombok.ToString;
+import lombok.extern.log4j.Log4j;
+
+@Log4j
+@ToString
 
 @Entity
 public class Phone implements Cloneable {
