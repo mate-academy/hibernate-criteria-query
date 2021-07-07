@@ -1,12 +1,12 @@
 package ma.hibernate.dao;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import ma.hibernate.model.Phone;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class PhoneDaoImplTest extends AbstractTest {
     private Map<String, String[]> params;
