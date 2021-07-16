@@ -42,26 +42,26 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
 
     @Override
     public List<Phone> findAll(Map<String, String[]> params) {
-        Session session = factory.openSession();
-        if (params != null && !params.isEmpty()) {
-            CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
-            CriteriaQuery<Phone> query = criteriaBuilder.createQuery(Phone.class);
-            Root<Phone> root = query.from(Phone.class);
-            // Predicates
-            Predicate predicate = null;
-            Set<String> keys = params.keySet();
-            for (String key : keys) {
-                CriteriaBuilder.In<String> tempPredicate = criteriaBuilder.in(root.get(key));
-                Arrays.stream(params.get(key)).forEach(tempPredicate::value);
-                if (predicate == null) {
-                    predicate = tempPredicate;
-                } else {
-                    predicate = criteriaBuilder.and(predicate, tempPredicate);
+        try (Session session = factory.openSession()) {
+            if (params != null && !params.isEmpty()) {
+                CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+                CriteriaQuery<Phone> query = criteriaBuilder.createQuery(Phone.class);
+                Root<Phone> root = query.from(Phone.class);
+                // Predicates
+                Predicate predicate = null;
+                Set<String> keys = params.keySet();
+                for (String key : keys) {
+                    CriteriaBuilder.In<String> tempPredicate = criteriaBuilder.in(root.get(key));
+                    Arrays.stream(params.get(key)).forEach(tempPredicate::value);
+                    if (predicate == null) {
+                        predicate = tempPredicate;
+                    } else {
+                        predicate = criteriaBuilder.and(predicate, tempPredicate);
+                    }
                 }
+                query.where(predicate);
+                return session.createQuery(query).getResultList();
             }
-            query.where(predicate);
-            return session.createQuery(query).getResultList();
-        } else {
             return session.createQuery("from Phone", Phone.class).getResultList();
         }
     }
