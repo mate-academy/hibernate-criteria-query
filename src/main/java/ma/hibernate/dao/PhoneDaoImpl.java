@@ -43,8 +43,8 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
     public List<Phone> findAll(Map<String, String[]> params) {
         try (Session session = factory.openSession()) {
             CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
-            CriteriaQuery<Phone> query = criteriaBuilder.createQuery(Phone.class);
-            Root<Phone> phoneRoot = query.from(Phone.class);
+            CriteriaQuery<Phone> queryByParameters = criteriaBuilder.createQuery(Phone.class);
+            Root<Phone> phoneRoot = queryByParameters.from(Phone.class);
             List<Predicate> predicatesList = new LinkedList<>();
             for (Map.Entry<String, String[]> entry : params.entrySet()) {
                 CriteriaBuilder.In<String> predicate =
@@ -55,8 +55,8 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
                 predicatesList.add(predicate);
             }
             Predicate[] predicates = predicatesList.stream().toArray(Predicate[]::new);
-            query.where(criteriaBuilder.and(predicates));
-            return session.createQuery(query).getResultList();
+            queryByParameters.where(criteriaBuilder.and(predicates));
+            return session.createQuery(queryByParameters).getResultList();
         } catch (Exception e) {
             throw new RuntimeException("Can't find phone by this parameters", e);
         }
