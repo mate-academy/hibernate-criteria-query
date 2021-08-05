@@ -1,5 +1,6 @@
 package ma.hibernate.model;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -14,6 +15,7 @@ public class Phone implements Cloneable {
     private String maker;
     private String color;
     private String os;
+    @Column(name = "country_manufactured")
     private String countryManufactured;
 
     public Long getId() {
@@ -76,12 +78,12 @@ public class Phone implements Cloneable {
     @Override
     public String toString() {
         return "Phone{"
-            + "id=" + id
-            + ", model='" + model + '\''
-            + ", maker='" + maker + '\''
-            + ", color='" + color + '\''
-            + ", os='" + os + '\''
-            + ", countryManufactured='" + countryManufactured + '\''
-            + '}';
+                + " id=" + id
+                + ", model='" + model + '\''
+                + ", maker='" + maker + '\''
+                + ", color='" + color + '\''
+                + ", os='" + os + '\''
+                + ", countryManufactured='" + countryManufactured + '\''
+                + '}';
     }
 }
