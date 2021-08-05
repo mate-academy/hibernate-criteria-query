@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaBuilder.In;
 import javax.persistence.criteria.CriteriaQuery;
@@ -58,9 +59,11 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
             criteriaQuery.where(fullPredicate);
             return session.createQuery(criteriaQuery).getResultList();
         } catch (Exception e) {
-            throw new RuntimeException(
-                    String.format("Can not get phones by %s",
-                            Arrays.toString(params.values().toArray())));
+            String s = params.values()
+                    .stream()
+                    .flatMap(Arrays::stream)
+                    .collect(Collectors.joining(", "));
+            throw new RuntimeException(String.format("Can not get phones by %s", s));
         }
     }
 }
