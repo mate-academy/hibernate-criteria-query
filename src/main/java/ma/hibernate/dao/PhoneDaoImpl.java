@@ -1,5 +1,6 @@
 package ma.hibernate.dao;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -29,6 +30,7 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
             if (transaction != null) {
                 transaction.rollback();
             }
+            throw new RuntimeException("Can't save phone " + phone + " to DB", e);
         } finally {
             if (session != null) {
                 session.close();
@@ -54,7 +56,7 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
             criteriaQuery.where(andPredicate);
             return session.createQuery(criteriaQuery).getResultList();
         } catch (Exception e) {
-            throw new RuntimeException("Can't find all phones using params " + params.values());
+            throw new RuntimeException("Can't find all phones using params " + Arrays.toString(params.values().toArray()));
         }
     }
 }
