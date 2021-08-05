@@ -46,7 +46,8 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
             Root<Phone> phoneRoot = query.from(Phone.class);
             Predicate phonePredicate = criteriaBuilder.and();
             for (Map.Entry<String, String[]> paramsEntry : params.entrySet()) {
-                CriteriaBuilder.In<String> inPredicate = criteriaBuilder.in(phoneRoot.get(paramsEntry.getKey()));
+                CriteriaBuilder.In<String> inPredicate =
+                        criteriaBuilder.in(phoneRoot.get(paramsEntry.getKey()));
                 for (String value : paramsEntry.getValue()) {
                     inPredicate.value(value);
                 }
