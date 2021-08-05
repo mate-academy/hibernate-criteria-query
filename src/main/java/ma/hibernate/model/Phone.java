@@ -1,11 +1,14 @@
 package ma.hibernate.model;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
 @Entity
+@Table(name = "phones")
 public class Phone implements Cloneable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -14,6 +17,7 @@ public class Phone implements Cloneable {
     private String maker;
     private String color;
     private String os;
+    @Column(name = "country_manufactured")
     private String countryManufactured;
 
     public Long getId() {
