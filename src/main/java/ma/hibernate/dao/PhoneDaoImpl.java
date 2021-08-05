@@ -46,17 +46,16 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
             Root<Phone> root = query.from(Phone.class);
             Predicate predicate = criteriaBuilder.and();
             for (Map.Entry<String, String[]> pair : params.entrySet()) {
-                CriteriaBuilder.In<Object> in = criteriaBuilder.in(root.get(pair.getKey()));
-                for (String s : pair.getValue()) {
-                    in.value(s);
+                CriteriaBuilder.In<Object> predicateIn = criteriaBuilder.in(root.get(pair.getKey()));
+                for (String value : pair.getValue()) {
+                    predicateIn.value(value);
                 }
-                predicate = criteriaBuilder.and(predicate, in);
+                predicate = criteriaBuilder.and(predicate, predicateIn);
             }
             query.where(predicate);
             return session.createQuery(query).getResultList();
         } catch (Exception e) {
-            throw new RuntimeException("Can't find phones by input condition: "
-                     + params, e);
+            throw new RuntimeException("Can't find phones by input condition.", e);
         }
     }
 }
