@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import ma.hibernate.model.Phone;
 import org.hibernate.Session;
@@ -41,24 +42,15 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
             CriteriaBuilder cb = session.getCriteriaBuilder();
             CriteriaQuery<Phone> query = cb.createQuery(Phone.class);
             Root<Phone> root = query.from(Phone.class);
-            int index = 0;
-            CriteriaBuilder.In[] predicates = new CriteriaBuilder.In[1];
-            if (!params.isEmpty()) {
-                for (Map.Entry<String, String[]> entry : params.entrySet()) {
-                    CriteriaBuilder.In<String> predicate = cb.in(root.get(entry.getKey()));
-                    for (String value : entry.getValue()) {
-                        predicate.value(value);
-                    }
-                    if (index == predicates.length) {
-                        CriteriaBuilder.In[] tmp = predicates;
-                        predicates = new CriteriaBuilder.In[index + 1];
-                        System.arraycopy(tmp, 0, predicates, 0, tmp.length);
-                    }
-                    predicates[index] = predicate;
-                    index++;
+            Predicate predicate = cb.and();
+            for (Map.Entry<String, String[]> entry : params.entrySet()) {
+                CriteriaBuilder.In<String> newPredicate = cb.in(root.get(entry.getKey()));
+                for (String value : entry.getValue()) {
+                    newPredicate.value(value);
                 }
-                query.where(cb.and(predicates));
+                predicate = cb.and(predicate, newPredicate);
             }
+            query.where(cb.and(predicate));
             return session.createQuery(query).getResultList();
         }
     }
