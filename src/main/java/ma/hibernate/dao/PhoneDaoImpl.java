@@ -2,6 +2,7 @@ package ma.hibernate.dao;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
@@ -47,12 +48,17 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
             Predicate predicate = cb.conjunction();
             for (Map.Entry<String, String[]> entry : params.entrySet()) {
                 CriteriaBuilder.In<String> newPredicate = cb.in(phoneRoot.get(entry.getKey()));
-                for (String value: entry.getValue()) {
+                for (String value : entry.getValue()) {
                     newPredicate.value(value);
                 }
                 predicate = cb.and(predicate, newPredicate);
             }
             return session.createQuery(query.where(predicate)).getResultList();
+        } catch (Exception e) {
+            throw new RuntimeException("Unable to get list of phones with these criteria: "
+            + params.entrySet().stream()
+                    .map(key -> key.getKey() + "=" + String.join(",", key.getValue()))
+                    .collect(Collectors.joining(", ", "{", "}")));
         }
     }
 }
