@@ -52,8 +52,7 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
                 }
                 predicateAnd = criteriaBuilder.and(param, predicateAnd);
             }
-            query.where(predicateAnd);
-            return session.createQuery(query).list();
+            return session.createQuery(query.where(predicateAnd)).list();
         }
     }
 }
