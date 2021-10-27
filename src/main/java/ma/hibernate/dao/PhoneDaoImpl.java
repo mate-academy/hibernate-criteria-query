@@ -1,6 +1,7 @@
 package ma.hibernate.dao;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -59,9 +60,8 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
         ArrayList<Predicate> tmp = new ArrayList<>();
         for (Map.Entry<String, String[]> entry : params.entrySet()) {
             CriteriaBuilder.In<String> predicate = cb.in(root.get(entry.getKey()));
-            for (String value : entry.getValue()) {
-                predicate.value(value);
-            }
+            Arrays.stream(entry.getValue())
+                    .forEach(predicate::value);
             tmp.add(predicate);
         }
         return tmp;
