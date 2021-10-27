@@ -1,5 +1,6 @@
 package ma.hibernate.dao;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -45,26 +46,20 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
             CriteriaQuery<Phone> criteriaQuery = cb.createQuery(Phone.class);
             Root<Phone> phoneRoot = criteriaQuery.from(Phone.class);
 
-            CriteriaBuilder.In<String>[] predicates = new CriteriaBuilder.In[params.size()];
-            int index = 0;
+            List<Predicate> listPredicates = new ArrayList<>();
             for (Map.Entry<String, String[]> entry: params.entrySet()) {
-                CriteriaBuilder.In<String> predicate =
+                CriteriaBuilder.In<String> currentPredicate =
                         cb.in(phoneRoot.get(entry.getKey()));
                 for (String param : entry.getValue()) {
-                    predicate.value(param);
+                    currentPredicate.value(param);
                 }
-                predicates[index++] = predicate;
+                listPredicates.add(currentPredicate);
             }
 
-            Predicate predicate = cb.and(predicates);
+            Predicate predicate = cb.and(listPredicates.toArray(
+                    new Predicate[listPredicates.size()]));
             criteriaQuery.where(predicate);
             return session.createQuery(criteriaQuery).getResultList();
-        }
-    }
-
-    private void addValue(CriteriaBuilder.In<String> predicate, String[] criterias) {
-        for (String criteria : criterias) {
-            predicate.value(criteria);
         }
     }
 }
