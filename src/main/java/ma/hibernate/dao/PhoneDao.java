@@ -8,5 +8,5 @@ public interface PhoneDao {
     Phone create(Phone phone);
 
     // Use CriteriaQuery for this method
-    List<Phone> findAll(Map<String, String[]> params);
+    List<Phone> findAll(Map<String, String[]> params) throws RuntimeException;
 }
