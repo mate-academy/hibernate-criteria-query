@@ -9,7 +9,7 @@ Method findAll() has one input parameter - `Map<String, String[]> params`. It ha
 ```text
 Map<String, String[]> params = new HashMap<>();
 params.put("countryManufactured", new String[]{"China"};
-params.put("producer", new String[]{"apple", "nokia", "samsung"};
+params.put("maker", new String[]{"apple", "nokia", "samsung"};
 params.put("color", new String[]{"white", "red"};
 ```
 You need to find all phones that match the specified parameters.
