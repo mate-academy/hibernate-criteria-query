@@ -1,7 +1,9 @@
 package ma.hibernate.dao;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
@@ -56,7 +58,10 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
             }
             return session.createQuery(query).getResultList();
         } catch (Exception e) {
-            throw new RuntimeException("Can`t get phones with this parameters", e);
+            String collect = params.entrySet().stream()
+                    .map(p -> p.getKey() + " " + Arrays.toString(p.getValue()))
+                    .collect(Collectors.joining("\n"));
+            throw new RuntimeException("Can`t get phones with this parameters: " + collect, e);
         }
     }
 }
