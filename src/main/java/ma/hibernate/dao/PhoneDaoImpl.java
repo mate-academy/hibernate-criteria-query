@@ -30,7 +30,7 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
             if (transaction != null) {
                 transaction.rollback();
             }
-            throw new RuntimeException("Unable to save a phone to DB. " + phone.toString(), e);
+            throw new RuntimeException("Unable to save a phone to DB. " + phone, e);
         } finally {
             if (session != null) {
                 session.close();
