@@ -41,7 +41,7 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
     }
 
     @Override
-    public List<Phone> findAll(Map<String, String[]> params) throws RuntimeException {
+    public List<Phone> findAll(Map<String, String[]> params) {
         try (Session session = factory.openSession()) {
             CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
             CriteriaQuery<Phone> compoundQuery = criteriaBuilder.createQuery(Phone.class);
@@ -71,13 +71,3 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
         }
     }
 }
-//        Map<String, String[]> params = new HashMap<>();
-//        params.put("countryManufactured", new String[]{"China"};
-//        params.put("producer", new String[]{"apple", "nokia", "samsung"};
-//        params.put("color", new String[]{"white", "red"};
-//
-//        private String model;
-//        private String producer;
-//        private String color;
-//        private String os;
-//        private String countryManufactured;
