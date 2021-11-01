@@ -18,24 +18,24 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
 
     @Override
     public Phone create(Phone phone) {
-       Session session = null;
-       Transaction transaction = null;
-       try {
-           session = factory.openSession();
-           transaction = session.beginTransaction();
-           session.persist(phone);
-           transaction.commit();
-       } catch (Exception e) {
-           if (transaction != null) {
-               transaction.rollback();
-           }
-           throw new RuntimeException("Can't create phone " + phone, e);
-       } finally {
-           if (session != null) {
-               session.close();
-           }
-       }
-       return phone;
+        Session session = null;
+        Transaction transaction = null;
+        try {
+            session = factory.openSession();
+            transaction = session.beginTransaction();
+            session.persist(phone);
+            transaction.commit();
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            throw new RuntimeException("Can't create phone " + phone, e);
+        } finally {
+            if (session != null) {
+                session.close();
+            }
+        }
+        return phone;
     }
 
     @Override
