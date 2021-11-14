@@ -49,9 +49,9 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
             Root<Phone> root = criteriaQuery.from(Phone.class);
 
             criteriaBuilder.and(
-                root.get("countryManufactured").in(countryManufactured),
-                root.get("maker").in(maker),
-                root.get("color").in(color));
+                    root.get("countryManufactured").in(countryManufactured),
+                    root.get("maker").in(maker),
+                    root.get("color").in(color));
 
             return session.createQuery(criteriaQuery).getResultList();
         } catch (Exception e) {
