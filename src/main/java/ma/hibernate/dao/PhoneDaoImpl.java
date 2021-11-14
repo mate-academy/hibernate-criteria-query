@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Map;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import ma.hibernate.model.Phone;
 import org.hibernate.Session;
@@ -49,10 +48,10 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
             CriteriaQuery<Phone> criteriaQuery = criteriaBuilder.createQuery(Phone.class);
             Root<Phone> root = criteriaQuery.from(Phone.class);
 
-            Predicate countryManufacturedPredicate = root.get("countryManufactured").in(countryManufactured);
-            Predicate makerPredicate = root.get("maker").in(maker);
-            Predicate colorPredicate = root.get("color").in(color);
-            criteriaBuilder.and(countryManufacturedPredicate, makerPredicate, colorPredicate);
+            criteriaBuilder.and(
+                root.get("countryManufactured").in(countryManufactured),
+                root.get("maker").in(maker),
+                root.get("color").in(color));
 
             return session.createQuery(criteriaQuery).getResultList();
         } catch (Exception e) {
