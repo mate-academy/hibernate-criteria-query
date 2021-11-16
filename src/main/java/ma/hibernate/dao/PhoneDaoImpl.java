@@ -49,7 +49,9 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
             Predicate[] predicates = params.entrySet()
                 .stream()
                 .map(pair -> {
-                    Predicate[] predicatesOr = Stream.of(pair.getValue()).map(s -> criteriaBuilder.equal(root.get(pair.getKey()), s)).toArray(Predicate[]::new);
+                    Predicate[] predicatesOr = Stream.of(pair.getValue())
+                        .map(s -> criteriaBuilder.equal(root.get(pair.getKey()), s))
+                        .toArray(Predicate[]::new);
                     return criteriaBuilder.or(predicatesOr);
                 })
                 .toArray(Predicate[]::new);
