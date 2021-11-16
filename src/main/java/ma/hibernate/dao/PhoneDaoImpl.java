@@ -2,8 +2,10 @@ package ma.hibernate.dao;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import ma.hibernate.model.Phone;
 import org.hibernate.Session;
@@ -39,19 +41,19 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
 
     @Override
     public List<Phone> findAll(Map<String, String[]> params) {
-        String[] countryManufactured = params.get("countryManufactured");
-        String[] maker = params.get("maker");
-        String[] color = params.get("color");
-
         try (Session session = factory.openSession()) {
             CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
             CriteriaQuery<Phone> criteriaQuery = criteriaBuilder.createQuery(Phone.class);
             Root<Phone> root = criteriaQuery.from(Phone.class);
 
-            criteriaBuilder.and(
-                    root.get("countryManufactured").in(countryManufactured),
-                    root.get("maker").in(maker),
-                    root.get("color").in(color));
+            Predicate[] predicates = params.entrySet()
+                .stream()
+                .map(pair -> {
+                    Predicate[] predicatesOr = Stream.of(pair.getValue()).map(s -> criteriaBuilder.equal(root.get(pair.getKey()), s)).toArray(Predicate[]::new);
+                    return criteriaBuilder.or(predicatesOr);
+                })
+                .toArray(Predicate[]::new);
+            criteriaQuery.where(criteriaBuilder.and(predicates));
 
             return session.createQuery(criteriaQuery).getResultList();
         } catch (Exception e) {
