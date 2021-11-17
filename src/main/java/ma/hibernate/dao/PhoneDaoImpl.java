@@ -8,12 +8,13 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import ma.hibernate.model.Phone;
-import ma.hibernate.util.HibernateUtil;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 
 public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
+    private SessionFactory sessionFactory = this.factory;
+
     public PhoneDaoImpl(SessionFactory sessionFactory) {
         super(sessionFactory);
     }
@@ -23,7 +24,7 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
         Transaction transaction = null;
         Session session = null;
         try {
-            session = HibernateUtil.getSessionFactory().openSession();
+            session = sessionFactory.openSession();
             transaction = session.beginTransaction();
             session.save(phone);
             transaction.commit();
@@ -42,7 +43,6 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
 
     @Override
     public List<Phone> findAll(Map<String, String[]> params) {
-        SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
         try (Session session = sessionFactory.openSession()) {
             CriteriaBuilder cb = session.getCriteriaBuilder();
             CriteriaQuery<Phone> query = cb.createQuery(Phone.class);
