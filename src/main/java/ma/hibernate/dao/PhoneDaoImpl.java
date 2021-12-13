@@ -4,15 +4,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import ma.hibernate.model.Phone;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
 
 public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
     public PhoneDaoImpl(SessionFactory sessionFactory) {
@@ -53,6 +51,7 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
             CriteriaBuilder.In<Object> countryManufacturedPredicate = null;
             CriteriaBuilder.In<Object> makerPredicate = null;
             CriteriaBuilder.In<Object> colorPredicate = null;
+            CriteriaBuilder.In<Object> modelPredicate = null;
 
             for (Map.Entry<String, String[]> parameter : entrySet) {
                 if (Objects.equals(parameter.getKey(), "countryManufactured")) {
@@ -74,8 +73,45 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
                         colorPredicate.value(color);
                     }
                 }
+                if (Objects.equals(parameter.getKey(), "model")) {
+                    modelPredicate = cb.in(phoneRoot.get("model"));
+                    for (String model : parameter.getValue()) {
+                        modelPredicate.value(model);
+                    }
+                }
             }
-            query.where(cb.and(countryManufacturedPredicate, makerPredicate, colorPredicate));
+
+            if (countryManufacturedPredicate != null && makerPredicate != null
+                    && colorPredicate != null) {
+                query.where(cb.and(countryManufacturedPredicate, makerPredicate, colorPredicate));
+            }
+            if (countryManufacturedPredicate != null && makerPredicate != null
+                    && colorPredicate == null) {
+                query.where(cb.and(countryManufacturedPredicate, makerPredicate));
+            }
+            if (countryManufacturedPredicate != null && makerPredicate == null
+                    && colorPredicate == null) {
+                query.where(cb.and(countryManufacturedPredicate));
+            }
+            if (countryManufacturedPredicate == null && makerPredicate != null
+                    && colorPredicate != null) {
+                query.where(cb.and(makerPredicate, colorPredicate));
+            }
+            if (countryManufacturedPredicate == null && makerPredicate != null
+                    && colorPredicate == null) {
+                query.where(cb.and(makerPredicate));
+            }
+            if (countryManufacturedPredicate == null && makerPredicate == null
+                    && colorPredicate != null) {
+                query.where(cb.and(colorPredicate));
+            }
+            if (countryManufacturedPredicate != null && makerPredicate == null
+                    && colorPredicate != null) {
+                query.where(cb.and(countryManufacturedPredicate, colorPredicate));
+            }
+            if (modelPredicate != null) {
+                query.where(cb.and(modelPredicate));
+            }
             return session.createQuery(query).getResultList();
         }
     }
