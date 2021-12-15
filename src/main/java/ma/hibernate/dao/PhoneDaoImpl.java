@@ -2,7 +2,6 @@ package ma.hibernate.dao;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -48,30 +47,12 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
             CriteriaQuery<Phone> query = cb.createQuery(Phone.class);
             Root<Phone> phoneRoot = query.from(Phone.class);
             Set<Map.Entry<String, String[]>> entrySet = params.entrySet();
-            Predicate predicateMaker = cb.conjunction();
-            Predicate predicateModel = cb.conjunction();
-            Predicate predicateCountryManufactured = cb.conjunction();
-            Predicate predicateColor = cb.conjunction();
+            Predicate predicate = cb.conjunction();
             for (Map.Entry<String, String[]> parameter : entrySet) {
-                if (Objects.equals(parameter.getKey(), "maker")) {
-                    predicateMaker = cb.and(predicateMaker, phoneRoot.get(parameter.getKey())
-                            .in(parameter.getValue()));
-                }
-                if (Objects.equals(parameter.getKey(), "model")) {
-                    predicateModel = cb.and(predicateModel, phoneRoot.get(parameter.getKey())
-                            .in(parameter.getValue()));
-                }
-                if (Objects.equals(parameter.getKey(), "countryManufactured")) {
-                    predicateCountryManufactured = cb.and(predicateCountryManufactured, phoneRoot
-                            .get(parameter.getKey()).in(parameter.getValue()));
-                }
-                if (Objects.equals(parameter.getKey(), "color")) {
-                    predicateColor = cb.and(predicateColor, phoneRoot.get(parameter.getKey())
-                            .in(parameter.getValue()));
-                }
+                predicate = cb.and(predicate, phoneRoot.get(parameter.getKey())
+                        .in(parameter.getValue()));
             }
-            query.where(cb.and(predicateMaker, predicateModel, predicateCountryManufactured,
-                    predicateColor));
+            query.where(cb.and(predicate));
             return session.createQuery(query).getResultList();
         }
     }
