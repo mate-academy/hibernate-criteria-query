@@ -56,7 +56,7 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
                 }
                 predicates.add(paramPredicate);
             }
-            commonPredicate = cb.and(predicates.toArray(predicates.toArray(new Predicate[0])));
+            commonPredicate = cb.and(predicates.toArray(new Predicate[0]));
             if (commonPredicate != null) {
                 query.where(commonPredicate);
             }
