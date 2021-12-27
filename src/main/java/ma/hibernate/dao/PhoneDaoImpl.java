@@ -58,8 +58,21 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
             query.where(cb.and(inClauses.toArray(new Predicate[0])));
             return session.createQuery(query).getResultList();
         } catch (HibernateException exception) {
-            throw new RuntimeException("Couldn't find phones with params"
-                    + params.toString());
+            throw new RuntimeException("Couldn't find all phones with params: "
+                    + convertToString(params));
         }
+    }
+
+    private String convertToString(Map<String, String[]> params) {
+        StringBuilder paramsInString = new StringBuilder();
+        for (Map.Entry<String, String[]> entry : params.entrySet()) {
+            paramsInString.append("( ").append(entry.getKey())
+                    .append(" ");
+            for (String value : entry.getValue()) {
+                paramsInString.append(value).append(", ");
+            }
+            paramsInString.append(")");
+        }
+        return paramsInString.toString();
     }
 }
