@@ -55,7 +55,7 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
                 }
                 predicates.add(predicateParam);
             }
-            criteriaQuery.where(criteriaBuilder.and(predicates.toArray(new Predicate[0])));
+                criteriaQuery.where(criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()])));
             return session.createQuery(criteriaQuery).getResultList();
         } catch (Exception e) {
             throw new RuntimeException("Can't get list phones with paramenters: "
