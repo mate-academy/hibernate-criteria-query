@@ -1,7 +1,6 @@
 package ma.hibernate.dao;
 
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -47,15 +46,16 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
             CriteriaBuilder cb = session.getCriteriaBuilder();
             CriteriaQuery<Phone> query = cb.createQuery(Phone.class);
             Root<Phone> root = query.from(Phone.class);
-            List<Predicate> predicateList = new LinkedList<>();
+            Predicate[] resultPredicate = new Predicate[params.size()];
+            int counter = 0;
             for (Map.Entry<String, String[]> entry : params.entrySet()) {
-                CriteriaBuilder.In<String> in = cb.in(root.get(entry.getKey()));
+                CriteriaBuilder.In<String> paramsPredicate = cb.in(root.get(entry.getKey()));
                 for (String parameter : entry.getValue()) {
-                    in.value(parameter);
+                    paramsPredicate.value(parameter);
                 }
-                predicateList.add(in);
+                resultPredicate[counter] = paramsPredicate;
+                counter++;
             }
-            Predicate[] resultPredicate = predicateList.toArray(new Predicate[0]);
             query.where(cb.and(resultPredicate));
             return session.createQuery(query).getResultList();
         } catch (Exception e) {
