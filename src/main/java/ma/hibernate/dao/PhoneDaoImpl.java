@@ -58,7 +58,7 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
             query.where(cb.and(predicateList.toArray(Predicate[]::new)));
             return session.createQuery(query).getResultList();
         } catch (Exception e) {
-            throw new RuntimeException("Can`t read value from with parameters: "
+            throw new RuntimeException("Can`t read value from DB with parameters: "
                     + params.keySet().stream()
                             .map(k -> k + ": " + Arrays.toString(params.get(k)))
                             .collect(Collectors.joining()));
