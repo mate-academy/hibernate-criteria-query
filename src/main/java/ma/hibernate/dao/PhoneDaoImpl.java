@@ -3,6 +3,7 @@ package ma.hibernate.dao;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
@@ -46,9 +47,8 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
             CriteriaQuery<Phone> query = cb.createQuery(Phone.class);
             Root<Phone> phoneRoot = query.from(Phone.class);
             List<Predicate> predicates = new ArrayList<>();
-
             for (Map.Entry<String, String[]> entry : params.entrySet()) {
-                CriteriaBuilder.In<Object> paramsPredicate =
+                CriteriaBuilder.In<String> paramsPredicate =
                         cb.in(phoneRoot.get(entry.getKey()));
                 for (String value : entry.getValue()) {
                     paramsPredicate.value(value);
@@ -57,6 +57,14 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
             }
             query.where(cb.and(predicates.toArray(new Predicate[0])));
             return session.createQuery(query).getResultList();
+        } catch (Exception e) {
+            throw new RuntimeException("Can't find phones with params: "
+                    + System.lineSeparator()
+                    + params.entrySet().stream()
+                    .map(entry -> entry.getKey() + ": "
+                            + String.join(",", entry.getValue())
+                            + System.lineSeparator())
+                    .collect(Collectors.joining()), e);
         }
     }
 }
