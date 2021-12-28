@@ -49,12 +49,13 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
             for (Map.Entry<String, String[]> phone : params.entrySet()) {
                 CriteriaBuilder.In<String> predicateFromParams =
                         cb.in(phoneRoot.get(phone.getKey()));
-                for (String filter : phone.getValue()) {
-                    predicateFromParams.value(filter);
+                for (String value : phone.getValue()) {
+                    predicateFromParams.value(value);
                 }
                 predicates.add(predicateFromParams);
             }
-            query.where(cb.and(predicates.toArray(new Predicate[0])));
+            Predicate[] array = new Predicate[predicates.size()];
+            query.where(cb.and(predicates.toArray(array)));
             return session.createQuery(query).getResultList();
         } catch (Exception e) {
             throw new RuntimeException("Can't find phones by this params");
