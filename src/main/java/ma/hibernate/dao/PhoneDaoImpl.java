@@ -1,6 +1,5 @@
 package ma.hibernate.dao;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -46,16 +45,16 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
             CriteriaBuilder cb = session.getCriteriaBuilder();
             CriteriaQuery<Phone> query = cb.createQuery(Phone.class);
             Root<Phone> phoneRoot = query.from(Phone.class);
-            List<Predicate> predicates = new ArrayList<>();
+            Predicate predicate = cb.and();
             for (Map.Entry<String, String[]> entry : params.entrySet()) {
                 CriteriaBuilder.In<String> paramsPredicate =
                         cb.in(phoneRoot.get(entry.getKey()));
                 for (String value : entry.getValue()) {
                     paramsPredicate.value(value);
                 }
-                predicates.add(paramsPredicate);
+                predicate = cb.and(predicate, paramsPredicate);
             }
-            query.where(cb.and(predicates.toArray(new Predicate[0])));
+            query.where(predicate);
             return session.createQuery(query).getResultList();
         } catch (Exception e) {
             throw new RuntimeException("Can't find phones with params: "
