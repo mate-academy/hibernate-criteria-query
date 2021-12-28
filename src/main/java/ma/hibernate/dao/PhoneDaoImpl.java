@@ -3,6 +3,7 @@ package ma.hibernate.dao;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
@@ -49,51 +50,21 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
             List<Predicate> predicates = new ArrayList<Predicate>();
 
             for (Map.Entry<String, String[]> entry : params.entrySet()) {
-                if (entry.getKey().equals("model")) {
-                    CriteriaBuilder.In<Object> modelPredicate = cb.in(phoneRoot.get("model"));
-                    for (String model : entry.getValue()) {
-                        modelPredicate.value(model);
-                    }
-                    predicates.add(modelPredicate);
-                    continue;
+                CriteriaBuilder.In<String> parameters = cb.in(phoneRoot.get(entry.getKey()));
+                for (String parameter : entry.getValue()) {
+                    parameters.value(parameter);
                 }
-                if (entry.getKey().equals("maker")) {
-                    CriteriaBuilder.In<Object> makerPredicate = cb.in(phoneRoot.get("maker"));
-                    for (String maker : entry.getValue()) {
-                        makerPredicate.value(maker);
-                    }
-                    predicates.add(makerPredicate);
-                    continue;
-                }
-                if (entry.getKey().equals("color")) {
-                    CriteriaBuilder.In<Object> colorPredicate = cb.in(phoneRoot.get("color"));
-                    for (String color : entry.getValue()) {
-                        colorPredicate.value(color);
-                    }
-                    predicates.add(colorPredicate);
-                    continue;
-                }
-                if (entry.getKey().equals("os")) {
-                    CriteriaBuilder.In<Object> osPredicate = cb.in(phoneRoot.get("os"));
-                    for (String os : entry.getValue()) {
-                        osPredicate.value(os);
-                    }
-                    predicates.add(osPredicate);
-                    continue;
-                }
-                if (entry.getKey().equals("countryManufactured")) {
-                    CriteriaBuilder.In<Object> countryManufacturedPredicate = cb
-                            .in(phoneRoot.get("countryManufactured"));
-                    for (String countryManufactured : entry.getValue()) {
-                        countryManufacturedPredicate.value(countryManufactured);
-                    }
-                    predicates.add(countryManufacturedPredicate);
-                }
+                predicates.add(parameters);
             }
             if (predicates.size() > 0) {
                 query.where(cb.and(predicates.toArray(new Predicate[predicates.size()])));
             }
             return session.createQuery(query).getResultList();
+        } catch (Exception e) {
+            throw new RuntimeException("Can't get list phones with paramenters: "
+                    + params.keySet().stream()
+                    .map(strings -> strings + ": " + strings)
+                    .collect(Collectors.joining()), e);
         }
     }
 }
