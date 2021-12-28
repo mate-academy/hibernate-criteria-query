@@ -31,7 +31,7 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
             if (transaction != null) {
                 transaction.rollback();
             }
-            throw new RuntimeException("Can't insert cinema`s hall " + phone, e);
+            throw new RuntimeException("Can't insert Hibernate criteria query\t " + phone, e);
         } finally {
             if (session != null) {
                 session.close();
@@ -55,6 +55,8 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
             }
             query.where(predicates.toArray(new Predicate[0]));
             return session.createQuery(query).getResultList();
+        } catch (Exception e) {
+            throw new RuntimeException("Can't find all phones with criterias", e);
         }
     }
 }
