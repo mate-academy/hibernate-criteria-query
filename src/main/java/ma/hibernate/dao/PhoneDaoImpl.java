@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import ma.hibernate.model.Phone;
 import org.hibernate.Session;
@@ -48,10 +49,11 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
             CriteriaBuilder.In<String>[] predicates = new CriteriaBuilder.In[params.size()];
             int index = 0;
             for (Map.Entry<String, String[]> pair : params.entrySet()) {
-                predicates[index] = cb.in(phoneRoot.get(pair.getKey()));
+                CriteriaBuilder.In<String> paramsPredicate = cb.in(phoneRoot.get(pair.getKey()));
                 for (String value : pair.getValue()) {
-                    predicates[index].value(value);
+                    paramsPredicate.value(value);
                 }
+                predicates[index] = paramsPredicate;
                 index++;
             }
             query.where(cb.and(predicates));
