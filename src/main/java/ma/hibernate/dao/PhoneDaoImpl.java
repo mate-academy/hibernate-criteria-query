@@ -3,7 +3,6 @@ package ma.hibernate.dao;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Queue;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
@@ -48,7 +47,7 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
             CriteriaBuilder cb = session.getCriteriaBuilder();
             CriteriaQuery<Phone> query = cb.createQuery(Phone.class);
             Root<Phone> root = query.from(Phone.class);
-            Queue<Predicate> predicates = new LinkedList<>();
+            List<Predicate> predicates = new LinkedList<>();
             for (Map.Entry<String, String[]> param : params.entrySet()) {
                 CriteriaBuilder.In<String> paramsPredicate = cb.in(root.get(param.getKey()));
                 for (String valueParam : param.getValue()) {
@@ -59,16 +58,21 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
             query.where(cb.and(predicates.toArray(new Predicate[0])));
             return session.createQuery(query).getResultList();
         } catch (HibernateException e) {
-            StringBuilder builderParams = new StringBuilder(System.lineSeparator());
-            for (Map.Entry<String, String[]> param: params.entrySet()) {
-                builderParams.append(param)
-                        .append(":")
-                        .append(String.join(", ", param.getValue()))
-                        .append(System.lineSeparator());
-            }
+            String paramsString = mapToParams(params);
             throw new RuntimeException(
                     "Can't get phones from DB by parameters: "
-                            + builderParams, e);
+                            + paramsString, e);
         }
+    }
+
+    private String mapToParams(Map<String, String[]> params) {
+        StringBuilder builderParams = new StringBuilder(System.lineSeparator());
+        for (Map.Entry<String, String[]> param: params.entrySet()) {
+            builderParams.append(param)
+                    .append(":")
+                    .append(String.join(", ", param.getValue()))
+                    .append(System.lineSeparator());
+        }
+        return builderParams.toString();
     }
 }
