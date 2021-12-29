@@ -59,14 +59,14 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
                     .toArray(new Predicate[predicates.size()])));
             return session.createQuery(query).getResultList();
         } catch (Exception exception) {
-            String collect = params.entrySet().stream()
+            String phoneParameters = params.entrySet().stream()
                     .map(entry -> entry.getKey() + ": "
                             + String.join(", ", entry.getValue())
                             + System.lineSeparator())
                     .collect(Collectors.joining());
             throw new RuntimeException("Can't get list of phones with selected parameters: "
                     + System.lineSeparator()
-                    + collect, exception);
+                    + phoneParameters, exception);
         }
     }
 }
