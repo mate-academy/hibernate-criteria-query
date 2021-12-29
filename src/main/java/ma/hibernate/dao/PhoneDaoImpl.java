@@ -3,6 +3,7 @@ package ma.hibernate.dao;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
@@ -50,29 +51,24 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
             List<Predicate> predicates = new LinkedList<>();
             for (Map.Entry<String, String[]> param : params.entrySet()) {
                 CriteriaBuilder.In<String> paramsPredicate = cb.in(root.get(param.getKey()));
-                for (String valueParam : param.getValue()) {
-                    paramsPredicate.value(valueParam);
+                for (String value : param.getValue()) {
+                    paramsPredicate.value(value);
                 }
                 predicates.add(paramsPredicate);
             }
             query.where(cb.and(predicates.toArray(new Predicate[0])));
             return session.createQuery(query).getResultList();
         } catch (HibernateException e) {
-            String paramsString = mapToParams(params);
+            String paramsString = params.entrySet().stream()
+                    .map(entry ->
+                            new StringBuilder(entry.getKey())
+                                    .append(":")
+                                    .append(String.join(", ", entry.getValue()))
+                                    .append(System.lineSeparator()))
+                    .collect(Collectors.joining());;
             throw new RuntimeException(
                     "Can't get phones from DB by parameters: "
                             + paramsString, e);
         }
-    }
-
-    private String mapToParams(Map<String, String[]> params) {
-        StringBuilder builderParams = new StringBuilder(System.lineSeparator());
-        for (Map.Entry<String, String[]> param: params.entrySet()) {
-            builderParams.append(param)
-                    .append(":")
-                    .append(String.join(", ", param.getValue()))
-                    .append(System.lineSeparator());
-        }
-        return builderParams.toString();
     }
 }
