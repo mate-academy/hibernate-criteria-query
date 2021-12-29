@@ -1,5 +1,6 @@
 package ma.hibernate.dao;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -59,16 +60,11 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
             query.where(cb.and(predicates.toArray(new Predicate[0])));
             return session.createQuery(query).getResultList();
         } catch (HibernateException e) {
-            String paramsString = params.entrySet().stream()
-                    .map(entry ->
-                            new StringBuilder(entry.getKey())
-                                    .append(":")
-                                    .append(String.join(", ", entry.getValue()))
-                                    .append(System.lineSeparator()))
-                    .collect(Collectors.joining());;
             throw new RuntimeException(
                     "Can't get phones from DB by parameters: "
-                            + paramsString, e);
+                            + params.entrySet().stream()
+                            .map(entry -> entry.getKey() + ": " + Arrays.toString(entry.getValue()))
+                            .collect(Collectors.joining(System.lineSeparator())), e);
         }
     }
 }
