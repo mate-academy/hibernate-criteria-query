@@ -46,46 +46,17 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
             CriteriaQuery<Phone> phoneQuery = cb.createQuery(Phone.class);
             Root<Phone> phoneRoot = phoneQuery.from(Phone.class);
 
-            CriteriaBuilder.In<String> modelPredicate = cb.in(phoneRoot.get("model"));
-            CriteriaBuilder.In<String> makerPredicate = cb.in(phoneRoot.get("maker"));
-            CriteriaBuilder.In<String> colorPredicate = cb.in(phoneRoot.get("color"));
-            CriteriaBuilder.In<String> osPredicate = cb.in(phoneRoot.get("os"));
-            CriteriaBuilder.In<String> countryPredicate
-                    = cb.in(phoneRoot.get("countryManufactured"));
-
-            List<Predicate> conditions = new ArrayList<>();
+            List<Predicate> predicatesList = new ArrayList<>();
 
             for (Map.Entry<String, String[]> param : params.entrySet()) {
-                String[] paramsArray = param.getValue();
-                for (String paramCurrentValue : paramsArray) {
-                    switch (param.getKey()) {
-                        case "model":
-                            modelPredicate.value(paramCurrentValue);
-                            conditions.add(modelPredicate);
-                            break;
-                        case "maker":
-                            makerPredicate.value(paramCurrentValue);
-                            conditions.add(makerPredicate);
-                            break;
-                        case "color":
-                            colorPredicate.value(paramCurrentValue);
-                            conditions.add(colorPredicate);
-                            break;
-                        case "os":
-                            osPredicate.value(paramCurrentValue);
-                            conditions.add(osPredicate);
-                            break;
-                        case "countryManufactured":
-                            countryPredicate.value(paramCurrentValue);
-                            conditions.add(countryPredicate);
-                            break;
-                        default:
-                            break;
-                    }
+                CriteriaBuilder.In<String> predicateCurrent = cb.in(phoneRoot.get(param.getKey()));
+                for (String paramCurrent : param.getValue()) {
+                    predicateCurrent.value(paramCurrent);
                 }
+                predicatesList.add(predicateCurrent);
             }
             return session.createQuery(phoneQuery.select(phoneRoot)
-                 .where(conditions.toArray(new Predicate[] {})))
+                 .where(predicatesList.toArray(new Predicate[] {})))
                  .getResultList();
         }
     }
