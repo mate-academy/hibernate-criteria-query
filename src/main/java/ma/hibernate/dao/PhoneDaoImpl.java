@@ -31,7 +31,8 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
             if (transaction != null) {
                 transaction.rollback();
             }
-            throw new RuntimeException("Can't create phone in DB: " + phone, ex);
+            throw new RuntimeException("Can't create phone in DB: "
+                    + phone, ex);
         } finally {
             if (session != null) {
                 session.close();
@@ -59,8 +60,7 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
             cq.where(cb.and(predicatesArray));
             return session.createQuery(cq).getResultList();
         } catch (HibernateException ex) {
-            throw new RuntimeException("Can't find all parameters: "
-                    + params, ex);
+            throw new RuntimeException("Can't find all parameters: " + params, ex);
         }
     }
 }
