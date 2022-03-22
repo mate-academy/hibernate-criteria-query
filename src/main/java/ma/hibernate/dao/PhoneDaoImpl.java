@@ -59,7 +59,8 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
             cq.where(cb.and(predicatesArray));
             return session.createQuery(cq).getResultList();
         } catch (HibernateException ex) {
-            throw new RuntimeException("Can't find all parameters: " + params, ex);
+            throw new RuntimeException("Can't find all parameters: " 
+                                       + params, ex);
         }
     }
 }
