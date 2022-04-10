@@ -23,7 +23,7 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
         Transaction transaction = null;
         Session session = null;
         try {
-            session  = factory.openSession();
+            session = factory.openSession();
             transaction = session.beginTransaction();
             session.save(phone);
             transaction.commit();
@@ -42,7 +42,7 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
 
     @Override
     public List<Phone> findAll(Map<String, String[]> params) {
-        try (Session session  = factory.openSession()) {
+        try (Session session = factory.openSession()) {
             CriteriaBuilder cb = session.getCriteriaBuilder();
             CriteriaQuery<Phone> query = cb.createQuery(Phone.class);
             Root<Phone> phoneRoot = query.from(Phone.class);
@@ -58,9 +58,6 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
 
             query.where(mainPredicate);
             return session.createQuery(query).getResultList();
-
-
-
         }
     }
 }
