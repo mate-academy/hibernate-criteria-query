@@ -72,4 +72,16 @@ public class Phone implements Cloneable {
             throw new RuntimeException("Can't make clone of " + this);
         }
     }
+
+    @Override
+    public String toString() {
+        return "Phone{"
+            + "id=" + id
+            + ", model='" + model + '\''
+            + ", maker='" + maker + '\''
+            + ", color='" + color + '\''
+            + ", os='" + os + '\''
+            + ", countryManufactured='" + countryManufactured + '\''
+            + '}';
+    }
 }
