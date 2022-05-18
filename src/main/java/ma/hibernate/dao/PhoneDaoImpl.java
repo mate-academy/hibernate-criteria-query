@@ -44,91 +44,18 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
             CriteriaBuilder cb = session.getCriteriaBuilder();
             CriteriaQuery<Phone> query = cb.createQuery(Phone.class);
             Root<Phone> phoneRoot = query.from(Phone.class);
-
-            CriteriaBuilder.In<String> cmPredicate = null;
-            if (params.containsKey("countryManufactured")
-                    && params.get("countryManufactured") != null) {
-                cmPredicate = cb.in(phoneRoot.get("countryManufactured"));
-                for (String cm : params.get("countryManufactured")) {
-                    cmPredicate.value(cm);
+            Predicate predicateG = cb.and();//general predicate
+            for (Map.Entry<String, String[]> mapEntry : params.entrySet()) {
+                CriteriaBuilder.In<Object> predicate = cb.in(phoneRoot.get(mapEntry.getKey()));
+                for (String value : mapEntry.getValue()) {
+                    predicate.value(value);
                 }
+                predicateG = cb.and(predicateG, predicate);
             }
-
-            CriteriaBuilder.In<String> makerPredicate = null;
-            if (params.containsKey("maker") && params.get("maker") != null) {
-                makerPredicate = cb.in(phoneRoot.get("maker"));
-                for (String maker : params.get("maker")) {
-                    makerPredicate.value(maker);
-                }
-            }
-
-            CriteriaBuilder.In<String> colorPredicate = null;
-            if (params.containsKey("color") && params.get("color") != null) {
-                colorPredicate = cb.in(phoneRoot.get("color"));
-                for (String color : params.get("color")) {
-                    colorPredicate.value(color);
-                }
-            }
-
-            CriteriaBuilder.In<String> modelPredicate = null;
-            if (params.containsKey("model") && params.get("model") != null) {
-                modelPredicate = cb.in(phoneRoot.get("model"));
-                for (String model : params.get("model")) {
-                    modelPredicate.value(model);
-                }
-            }
-
-            CriteriaBuilder.In<String> osPredicate = null;
-            if (params.containsKey("os") && params.get("os") != null) {
-                osPredicate = cb.in(phoneRoot.get("os"));
-                for (String os : params.get("os")) {
-                    osPredicate.value(os);
-                }
-            }
-
-            Predicate predicate = null;
-            if (modelPredicate != null) {
-                predicate = modelPredicate;
-            }
-
-            if (makerPredicate != null) {
-                if (predicate != null) {
-                    predicate = cb.and(predicate, makerPredicate);
-                } else {
-                    predicate = makerPredicate;
-                }
-            }
-
-            if (colorPredicate != null) {
-                if (predicate != null) {
-                    predicate = cb.and(predicate, colorPredicate);
-                } else {
-                    predicate = colorPredicate;
-                }
-            }
-
-            if (osPredicate != null) {
-                if (predicate != null) {
-                    predicate = cb.and(predicate, osPredicate);
-                } else {
-                    predicate = osPredicate;
-                }
-            }
-
-            if (cmPredicate != null) {
-                if (predicate != null) {
-                    predicate = cb.and(predicate, cmPredicate);
-                } else {
-                    predicate = cmPredicate;
-                }
-            }
-
-            if (predicate != null) {
-                query.where(predicate);
-                return session.createQuery(query).getResultList();
-            } else {
-                return session.createQuery(query).getResultList();
-            }
+            query.where(predicateG);
+            return session.createQuery(query).getResultList();
+        } catch (Exception e) {
+            throw new RuntimeException("Can't find phones that meets criteria", e);
         }
     }
 }
