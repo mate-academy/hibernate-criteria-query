@@ -53,61 +53,6 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
                 predicate = cb.and(predicate, paramPredicate);
             }
             criteriaQuery.where(predicate);
-
-//
-//            CriteriaBuilder.In<String> countryManufacturedPredicate
-//                    = cb.in(phoneRoot.get("countryManufactured"));
-//            CriteriaBuilder.In<String> modelPredicate = cb.in(phoneRoot.get("model"));
-//            CriteriaBuilder.In<String> makerPredicate = cb.in(phoneRoot.get("maker"));
-//            CriteriaBuilder.In<String> colorPredicate = cb.in(phoneRoot.get("color"));
-//            CriteriaBuilder.In<String> osPredicate = cb.in(phoneRoot.get("os"));
-//            String[] models = null;
-//            String[] countryManufactureds = null;
-//            String[] makers = null;
-//            String[] colors = null;
-//            String[] oss = null;
-//            if (params.containsKey("countryManufactured")) {
-//                countryManufactureds = params.get("countryManufactured");
-//                for (String manufactured : countryManufactureds) {
-//                    countryManufacturedPredicate.value(manufactured);
-//                }
-//            }
-//            if (params.containsKey("model")) {
-//                models = params.get("model");
-//                for (String model : models) {
-//                    modelPredicate.value(model);
-//                }
-//            }
-//            if (params.containsKey("maker")) {
-//                makers = params.get("maker");
-//                for (String maker : makers) {
-//                    makerPredicate.value(maker);
-//                }
-//            }
-//            if (params.containsKey("color")) {
-//                colors = params.get("color");
-//                for (String color : colors) {
-//                    colorPredicate.value(color);
-//                }
-//            }
-//            if (params.containsKey("os")) {
-//                oss = params.get("os");
-//                for (String os : oss) {
-//                    colorPredicate.value(os);
-//                }
-//            }
-//            criteriaQuery.where(cb.or(
-////                    countryManufacturedPredicate,
-//                            modelPredicate,
-//                            makerPredicate,
-//
-////                    osPredicate,
-////                    colorPredicate,
-//                            cb.and(makerPredicate, colorPredicate),
-//                            cb.and(makerPredicate, colorPredicate, countryManufacturedPredicate)
-//                //select, * from phones where
-//                    )
-//            );
             return session.createQuery(criteriaQuery).getResultList();
         } catch (Exception e) {
             throw new RuntimeException("Can`t find all with parameters" + params, e);
