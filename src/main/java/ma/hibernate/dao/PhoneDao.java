@@ -9,4 +9,6 @@ public interface PhoneDao {
 
     // Use CriteriaQuery for this method
     List<Phone> findAll(Map<String, String[]> params);
+
+    List<Phone> findByMakers(String[] makers);
 }
