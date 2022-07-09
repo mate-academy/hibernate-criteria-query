@@ -1,9 +1,16 @@
 package ma.hibernate.dao;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import ma.hibernate.model.Phone;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 
 public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
     public PhoneDaoImpl(SessionFactory sessionFactory) {
@@ -12,11 +19,58 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
 
     @Override
     public Phone create(Phone phone) {
-        return null;
+        Session session = null;
+        Transaction transaction = null;
+        try {
+            session = factory.openSession();
+            transaction = session.beginTransaction();
+            session.save(phone);
+            transaction.commit();
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            throw new RuntimeException("Can't add phone " + phone + " to DB", e);
+        } finally {
+            if (session != null) {
+                session.close();
+            }
+        }
+        return phone;
     }
 
     @Override
     public List<Phone> findAll(Map<String, String[]> params) {
-        return null;
+        try (Session session = factory.openSession()) {
+            CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+            CriteriaQuery<Phone> query = criteriaBuilder.createQuery(Phone.class);
+            Root<Phone> phoneRoot = query.from(Phone.class);
+            Predicate predicate = criteriaBuilder.and();
+            for (Map.Entry<String, String[]> entry : params.entrySet()) {
+                CriteriaBuilder.In<String> current =
+                        criteriaBuilder.in(phoneRoot.get(entry.getKey()));
+                for (String value : entry.getValue()) {
+                    current.value(value);
+                }
+                predicate = criteriaBuilder.and(predicate, current);
+            }
+            query.where(predicate);
+            return session.createQuery(query).getResultList();
+        } catch (Exception e) {
+            throw new RuntimeException("Can't get list of phones with given criteria", e);
+        }
+    }
+
+    @Override
+    public List<Phone> findByMakers(String[] makers) {
+        try (Session session = factory.openSession()) {
+            CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+            CriteriaQuery<Phone> query = criteriaBuilder.createQuery(Phone.class);
+            Root<Phone> phoneRoot = query.from(Phone.class);
+            CriteriaBuilder.In<String> makerPredicate = criteriaBuilder.in(phoneRoot.get("maker"));
+            Arrays.stream(makers).forEach(makerPredicate::value);
+            query.where(makerPredicate);
+            return session.createQuery(query).getResultList();
+        }
     }
 }
