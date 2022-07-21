@@ -55,7 +55,7 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
             query.where(predicate);
             return session.createQuery(query).getResultList();
         } catch (Exception e) {
-            throw new RuntimeException("Can't find any item on request", e);
+            throw new RuntimeException("Can't find any phones on request", e);
         }
     }
 }
