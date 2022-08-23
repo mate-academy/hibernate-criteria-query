@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import ma.hibernate.model.Phone;
 import org.hibernate.Session;
@@ -43,15 +44,16 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
             CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
             CriteriaQuery<Phone> query = criteriaBuilder.createQuery(Phone.class);
             Root<Phone> phoneRoot = query.from(Phone.class);
-            CriteriaBuilder.In<String> paramsPredicate = null;
+            Predicate globalPredicate = criteriaBuilder.and();
             for (Map.Entry<String, String[]> entry : params.entrySet()) {
-                paramsPredicate = criteriaBuilder.in(phoneRoot.get(entry.getKey()));
-                for (String model : entry.getValue()) {
-                    paramsPredicate.value(model);
+                CriteriaBuilder.In<String> localPredicate
+                        = criteriaBuilder.in(phoneRoot.get(entry.getKey()));
+                for (String value : entry.getValue()) {
+                    localPredicate.value(value);
                 }
-                criteriaBuilder.and(paramsPredicate);
+                globalPredicate = criteriaBuilder.and(globalPredicate, localPredicate);
             }
-            query.where(criteriaBuilder.and(paramsPredicate));
+            query.where(globalPredicate);
             return session.createQuery(query).getResultList();
         } catch (RuntimeException e) {
             throw new RuntimeException("Can't find phones with params "
