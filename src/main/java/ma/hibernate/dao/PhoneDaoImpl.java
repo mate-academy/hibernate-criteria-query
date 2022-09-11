@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import ma.hibernate.model.Phone;
@@ -52,6 +53,8 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
             }
             query.select(phone).where(predicates.toArray(new Predicate[0]));
             return session.createQuery(query).getResultList();
+        } catch (Exception e) {
+            throw new RuntimeException("Can't find any product from criteria: " + params, e);
         }
     }
 }
