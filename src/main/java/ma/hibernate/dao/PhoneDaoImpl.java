@@ -20,7 +20,7 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
     @Override
     public Phone create(Phone phone) {
         Transaction transaction = null;
-        try (Session session = factory.openSession()){
+        try (Session session = factory.openSession()) {
             transaction = session.beginTransaction();
             session.save(phone);
             transaction.commit();
