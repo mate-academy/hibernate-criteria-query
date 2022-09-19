@@ -4,19 +4,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-
-import com.google.protobuf.MapEntry;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import ma.hibernate.exception.DataProcessingException;
 import ma.hibernate.model.Phone;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.query.criteria.internal.predicate.InPredicate;
-
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
 
 public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
     public PhoneDaoImpl(SessionFactory sessionFactory) {
@@ -58,26 +55,26 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
                     .map(Map.Entry::getValue)
                     .flatMap(Arrays::stream)
                     .forEach(makerPredicate::value);
-            if(((InPredicate)makerPredicate).getValues().size() > 0) {
+            if (((InPredicate)makerPredicate).getValues().size() > 0) {
                 predicates.add(makerPredicate);
             }
 
-            CriteriaBuilder.In<String> countryPredicate = cb.in(phoneRoot.get("countryManufactured"));
+            CriteriaBuilder.In<String> countryPredicate =
+                    cb.in(phoneRoot.get("countryManufactured"));
             params.entrySet().stream().filter(p -> p.getKey().equals("countryManufactured"))
                     .map(Map.Entry::getValue)
                     .flatMap(Arrays::stream)
                     .forEach(countryPredicate::value);
-            if(((InPredicate)countryPredicate).getValues().size() > 0) {
+            if (((InPredicate)countryPredicate).getValues().size() > 0) {
                 predicates.add(countryPredicate);
             }
-
 
             CriteriaBuilder.In<String> modelPredicate = cb.in(phoneRoot.get("model"));
             params.entrySet().stream().filter(p -> p.getKey().equals("model"))
                     .map(Map.Entry::getValue)
                     .flatMap(Arrays::stream)
                     .forEach(modelPredicate::value);
-            if(((InPredicate)modelPredicate).getValues().size() > 0) {
+            if (((InPredicate)modelPredicate).getValues().size() > 0) {
                 predicates.add(modelPredicate);
             }
 
@@ -86,7 +83,7 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
                     .map(Map.Entry::getValue)
                     .flatMap(Arrays::stream)
                     .forEach(colorPredicate::value);
-            if(((InPredicate)colorPredicate).getValues().size() > 0) {
+            if (((InPredicate)colorPredicate).getValues().size() > 0) {
                 predicates.add(colorPredicate);
             }
 
