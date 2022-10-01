@@ -1,6 +1,5 @@
 package ma.hibernate.dao;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -39,59 +38,13 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
             CriteriaBuilder cb = session.getCriteriaBuilder();
             CriteriaQuery<Phone> query = cb.createQuery(Phone.class);
             Root<Phone> phoneRoot = query.from(Phone.class);
-            CriteriaBuilder.In<String> countryManufacturedPredicate = null;
-            List<Predicate> predicateList = new ArrayList<>();
-            if (params.containsKey("countryManufactured")) {
-                countryManufacturedPredicate =
-                        cb.in(phoneRoot.get("countryManufactured"));
-                for (String countryManufactured : params.get("countryManufactured")) {
-                    countryManufacturedPredicate.value(countryManufactured);
+            Predicate predicate = cb.conjunction();
+            for (String param: params.keySet()) {
+                CriteriaBuilder.In<String> in = cb.in(phoneRoot.get(param));
+                for (String inPredicate : params.get(param)) {
+                    in.value(inPredicate);
                 }
-                predicateList.add(countryManufacturedPredicate);
-            }
-            CriteriaBuilder.In<String> makerPredicate = null;
-            if (params.containsKey("maker")) {
-                makerPredicate = cb.in(phoneRoot.get("maker"));
-                for (String maker : params.get("maker")) {
-                    makerPredicate.value(maker);
-                }
-                predicateList.add(makerPredicate);
-            }
-            CriteriaBuilder.In<String> colorPredicate = null;
-            if (params.containsKey("color")) {
-                colorPredicate = cb.in(phoneRoot.get("color"));
-                for (String color : params.get("color")) {
-                    colorPredicate.value(color);
-                }
-                predicateList.add(colorPredicate);
-            }
-            CriteriaBuilder.In<String> modelPredicate = null;
-            if (params.containsKey("model")) {
-                modelPredicate = cb.in(phoneRoot.get("model"));
-                for (String model : params.get("model")) {
-                    modelPredicate.value(model);
-                }
-                predicateList.add(modelPredicate);
-            }
-            if (predicateList.isEmpty()) {
-                return session.createQuery(query).getResultList();
-            }
-            Predicate predicate;
-            switch (predicateList.size()) {
-                case 1:
-                    predicate = predicateList.get(0);
-                    break;
-                case 2:
-                    predicate = cb.and(predicateList.get(0), predicateList.get(1));
-                    break;
-                case 3:
-                    predicate = cb.and(predicateList.get(0), predicateList.get(1),
-                            predicateList.get(2));
-                    break;
-                default:
-                    predicate = cb.and(predicateList.get(0), predicateList.get(1),
-                            predicateList.get(2), predicateList.get(3));
-                    break;
+                predicate = cb.and(predicate, in);
             }
             query.where(predicate);
             return session.createQuery(query).getResultList();
