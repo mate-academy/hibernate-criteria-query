@@ -1,5 +1,6 @@
 package ma.hibernate.dao;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -45,27 +46,16 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
             CriteriaBuilder builder = session.getCriteriaBuilder();
             CriteriaQuery<Phone> query = builder.createQuery(Phone.class);
             Root<Phone> root = query.from(Phone.class);
-
-            In<String> inCountryPredicate = builder.in(root.get("countryManufactured"));
-            for (String country : params.get("countryManufactured")) {
-                inCountryPredicate.value(country);
+            List<Predicate> predicates = new ArrayList<>();
+            for (Map.Entry<String, String[]> entry : params.entrySet()) {
+                In<String> predicate = builder.in(root.get(entry.getKey()));
+                for (String param : entry.getValue()) {
+                    predicate.value(param);
+                }
+                predicates.add(predicate);
             }
-
-            In<String> inMakerPredicate = builder.in(root.get("maker"));
-            for (String maker : params.get("maker")) {
-                inMakerPredicate.value(maker);
-            }
-
-            In<String> inColorPredicate = builder.in(root.get("color"));
-            for (String color : params.get("color")) {
-                inColorPredicate.value(color);
-            }
-
-            Predicate andPredicate = builder.and(inCountryPredicate,
-                    inMakerPredicate, inColorPredicate);
-            query.where(andPredicate);
+            query.where(builder.and(predicates.stream().toArray(Predicate[]::new)));
             return session.createQuery(query).getResultList();
-
         } catch (Exception e) {
             throw new RuntimeException("Can't get phones from DB", e);
         }
