@@ -1,7 +1,5 @@
 package ma.hibernate.dao;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -50,45 +48,15 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
                 query.select(phoneRoot);
                 return session.createQuery(query).getResultList();
             }
-            CriteriaBuilder.In<String> modelPredicate = cb.in(phoneRoot.get("model"));
-            CriteriaBuilder.In<String> makerPredicate = cb.in(phoneRoot.get("maker"));
-            CriteriaBuilder.In<String> colorPredicate = cb.in(phoneRoot.get("color"));
-            CriteriaBuilder.In<String> osPredicate = cb.in(phoneRoot.get("os"));
-            CriteriaBuilder.In<String> countryPredicate =
-                    cb.in(phoneRoot.get("countryManufactured"));
-            List<Predicate> predicates = new ArrayList<>();
+            Predicate predicateAnd = cb.and();
             for (Map.Entry<String, String[]> mapEntry : params.entrySet()) {
-                String parameter = mapEntry.getKey();
-                switch (parameter) {
-                    case "model" : {
-                        Arrays.stream(mapEntry.getValue()).forEach(modelPredicate::value);
-                        predicates.add(modelPredicate);
-                        break;
-                    }
-                    case "maker" : {
-                        Arrays.stream(mapEntry.getValue()).forEach(makerPredicate::value);
-                        predicates.add(makerPredicate);
-                        break;
-                    }
-                    case "color": {
-                        Arrays.stream(mapEntry.getValue()).forEach(colorPredicate::value);
-                        predicates.add(colorPredicate);
-                        break;
-                    }
-                    case "os": {
-                        Arrays.stream(mapEntry.getValue()).forEach(osPredicate::value);
-                        predicates.add(osPredicate);
-                        break;
-                    }
-                    case "countryManufactured" :
-                    default: {
-                        Arrays.stream(mapEntry.getValue()).forEach(countryPredicate::value);
-                        predicates.add(countryPredicate);
-                        break;
-                    }
+                CriteriaBuilder.In<String> inPredicate = cb.in(phoneRoot.get(mapEntry.getKey()));
+                for (String parameter : mapEntry.getValue()) {
+                    inPredicate.value(parameter);
                 }
+                predicateAnd = cb.and(predicateAnd, inPredicate);
             }
-            query.where(cb.and(predicates.toArray(new Predicate[0])));
+            query.where(cb.and(predicateAnd));
             return session.createQuery(query).getResultList();
         } catch (Exception e) {
             throw new RuntimeException("Can't get a phone by this query", e);
