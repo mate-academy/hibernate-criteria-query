@@ -1,22 +1,15 @@
 package ma.hibernate.dao;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-
-import ma.hibernate.model.Phone;
-import ma.hibernate.util.HibernateUtil;
-import org.hibernate.Hibernate;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
-import org.hibernate.query.criteria.internal.predicate.InPredicate;
-
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import ma.hibernate.model.Phone;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 
 public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
     public PhoneDaoImpl(SessionFactory sessionFactory) {
@@ -52,25 +45,15 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
             CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
             CriteriaQuery<Phone> query = criteriaBuilder.createQuery(Phone.class);
             Root<Phone> root = query.from(Phone.class);
-
-            Predicate and = null;
-            boolean andWasAssigned = false;
-
-
+            Predicate predicate = criteriaBuilder.and();
             for (String key : params.keySet()) {
                 CriteriaBuilder.In<String> keyPredicate = criteriaBuilder.in(root.get(key));
                 for (String value : params.get(key)) {
                     keyPredicate.value(value);
                 }
-
-                if (!andWasAssigned) {
-                    and = keyPredicate;
-                    andWasAssigned = true;
-                }
-
-                and = criteriaBuilder.and(and, keyPredicate);
+                predicate = criteriaBuilder.and(predicate, keyPredicate);
             }
-            query.where(and);
+            query.where(predicate);
             return session.createQuery(query).getResultList();
         } catch (Exception e) {
             throw new RuntimeException("Can`t find all ", e);
