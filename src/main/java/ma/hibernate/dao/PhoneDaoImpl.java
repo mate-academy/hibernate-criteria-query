@@ -4,15 +4,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import ma.hibernate.model.Phone;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
-
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import ma.hibernate.model.Phone;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 
 public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
     public PhoneDaoImpl(SessionFactory sessionFactory) {
@@ -44,21 +43,17 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
     @Override
     public List<Phone> findAll(Map<String, String[]> params) {
         try (Session session = factory.openSession()) {
-            CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
-            CriteriaQuery<Phone> query = criteriaBuilder.createQuery(Phone.class);
+            CriteriaBuilder cb = session.getCriteriaBuilder();
+            CriteriaQuery<Phone> query = cb.createQuery(Phone.class);
             Root<Phone> root = query.from(Phone.class);
             List<CriteriaBuilder.In<String>> predicates = new ArrayList<>();
             for (Map.Entry<String, String[]> entry : params.entrySet()) {
-                CriteriaBuilder.In<String> predicate = criteriaBuilder.in(root.get(entry.getKey()));
-                Arrays.stream(entry.getValue()).forEach(predicate::value);
-                predicates.add(predicate);
+                CriteriaBuilder.In<String> stringIn = cb.in(root.get(entry.getKey()));
+                Arrays.stream(entry.getValue()).forEachOrdered(stringIn::value);
+                predicates.add(stringIn);
             }
-            Predicate predicateParams = criteriaBuilder.and(predicates.toArray(Predicate[]::new));
-            query.where(predicateParams);
+            query.where(predicates.toArray(new Predicate[]{}));
             return session.createQuery(query).getResultList();
-        } catch (Exception e) {
-            throw new RuntimeException("Couldn't find phone by params:" + params, e);
         }
-
     }
 }
