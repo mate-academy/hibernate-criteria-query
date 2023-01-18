@@ -41,52 +41,29 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
     @Override
     public List<Phone> findAll(Map<String, String[]> params) {
         try (Session session = factory.openSession()) {
-            CriteriaBuilder cb = session.getCriteriaBuilder();
-            CriteriaQuery<Phone> query = cb.createQuery(Phone.class);
-            Root<Phone> phoneRoot = query.from(Phone.class);
-            CriteriaBuilder.In<String> countryManufactured =
-                    cb.in(phoneRoot.get("countryManufactured"));
-            CriteriaBuilder.In<String> maker = cb.in(phoneRoot.get("maker"));
-            CriteriaBuilder.In<String> color = cb.in(phoneRoot.get("color"));
-            CriteriaBuilder.In<String> model = cb.in(phoneRoot.get("model"));
-            CriteriaBuilder.In<String> os = cb.in(phoneRoot.get("os"));
-            Predicate predicate = cb.and();
-            for (Map.Entry<String, String[]> entry : params.entrySet()) {
-                if (entry.getKey().equals("countryManufactured")) {
-                    for (String country : entry.getValue()) {
-                        countryManufactured.value(country);
-                    }
-                    predicate = cb.and(predicate, countryManufactured);
+            CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+            CriteriaQuery<Phone> criteriaQuery = criteriaBuilder.createQuery(Phone.class);
+            Root<Phone> phoneRoot = criteriaQuery.from(Phone.class);
+            Predicate predicateX = null;
+            int count = 0;
+            for (Map.Entry<String, String[]> entry: params.entrySet()) {
+                CriteriaBuilder.In<String> in = criteriaBuilder.in(phoneRoot.get(entry.getKey()));
+                for (String val: entry.getValue()) {
+                    in.value(val);
                 }
-                if (entry.getKey().equals("maker")) {
-                    for (String eachMaker : entry.getValue()) {
-                        maker.value(eachMaker);
-                    }
-                    predicate = cb.and(predicate, maker);
-                }
-                if (entry.getKey().equals("color")) {
-                    for (String eachColor : entry.getValue()) {
-                        color.value(eachColor);
-                    }
-                    predicate = cb.and(predicate, color);
-                }
-                if (entry.getKey().equals("model")) {
-                    for (String eachModel : entry.getValue()) {
-                        model.value(eachModel);
-                    }
-                    predicate = cb.and(predicate, model);
-                }
-                if (entry.getKey().equals("os")) {
-                    for (String eachOs : entry.getValue()) {
-                        os.value(eachOs);
-                    }
-                    predicate = cb.and(predicate, os);
-                }
+                Predicate predicate = criteriaBuilder.and(in);
+                predicateX = (count == 0
+                        ? criteriaBuilder.and(predicate)
+                        : criteriaBuilder.and(predicateX, predicate));
+                ++count;
             }
-            query.where(predicate);
-            return session.createQuery(query).getResultList();
+            return session
+                    .createQuery(predicateX != null
+                            ? criteriaQuery.where(predicateX)
+                            : criteriaQuery)
+                    .getResultList();
         } catch (Exception e) {
-            throw new RuntimeException("Can`t find phones in DB", e);
+            throw new RuntimeException("Can't get list phones", e);
         }
     }
 }
