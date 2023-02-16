@@ -1,6 +1,5 @@
 package ma.hibernate.dao;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -45,17 +44,16 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
             CriteriaBuilder cb = session.getCriteriaBuilder();
             CriteriaQuery<Phone> query = cb.createQuery(Phone.class);
             Root<Phone> phoneRoot = query.from(Phone.class);
-            List<Predicate> predicates = new ArrayList<>();
-            params.forEach((key, value) -> {
+            Predicate phonePredicate = cb.conjunction();
+            for (Map.Entry<String, String[]> entry : params.entrySet()) {
                 CriteriaBuilder.In<String> predicate =
-                        cb.in(phoneRoot.get(key));
-                for (String s : value) {
-                    predicate.value(s);
+                        cb.in(phoneRoot.get(entry.getKey()));
+                for (String value : entry.getValue()) {
+                    predicate.value(value);
                 }
-                predicates.add(predicate);
-            });
-            return session.createQuery(query.where(
-                    predicates.toArray(new Predicate[]{}))).getResultList();
+                phonePredicate = cb.and(phonePredicate, predicate);
+            }
+            return session.createQuery(query.where(phonePredicate)).getResultList();
         } catch (Exception e) {
             throw new RuntimeException("Can't get phones from DB", e);
         }
