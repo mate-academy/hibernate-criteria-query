@@ -1,11 +1,14 @@
 package ma.hibernate.model;
 
+import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
 @Entity
+@Table(name = "phones")
 public class Phone implements Cloneable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -71,6 +74,28 @@ public class Phone implements Cloneable {
         } catch (CloneNotSupportedException e) {
             throw new RuntimeException("Can't make clone of " + this);
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Phone phone = (Phone) o;
+        return Objects.equals(id, phone.id)
+                && Objects.equals(model, phone.model)
+                && Objects.equals(maker, phone.maker)
+                && Objects.equals(color, phone.color)
+                && Objects.equals(os, phone.os)
+                && Objects.equals(countryManufactured, phone.countryManufactured);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, model, maker, color, os, countryManufactured);
     }
 
     @Override
