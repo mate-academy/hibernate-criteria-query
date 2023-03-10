@@ -1,9 +1,9 @@
 package ma.hibernate.model;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 
 @Entity
 public class Phone implements Cloneable {
@@ -76,12 +76,12 @@ public class Phone implements Cloneable {
     @Override
     public String toString() {
         return "Phone{"
-            + "id=" + id
-            + ", model='" + model + '\''
-            + ", maker='" + maker + '\''
-            + ", color='" + color + '\''
-            + ", os='" + os + '\''
-            + ", countryManufactured='" + countryManufactured + '\''
-            + '}';
+                + "id=" + id
+                + ", model='" + model + '\''
+                + ", maker='" + maker + '\''
+                + ", color='" + color + '\''
+                + ", os='" + os + '\''
+                + ", countryManufactured='" + countryManufactured + '\''
+                + '}';
     }
 }
