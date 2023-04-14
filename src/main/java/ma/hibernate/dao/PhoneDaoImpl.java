@@ -1,5 +1,5 @@
 package ma.hibernate.dao;
-gi
+
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
