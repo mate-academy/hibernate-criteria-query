@@ -31,7 +31,7 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
             if (transaction != null) {
                 transaction.rollback();
             }
-            throw new RuntimeException("", e);
+            throw new RuntimeException("Exception ", e);
         } finally {
             if (session != null) {
                 session.close();
