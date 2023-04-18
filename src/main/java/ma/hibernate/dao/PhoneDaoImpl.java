@@ -1,9 +1,19 @@
 package ma.hibernate.dao;
 
+import ma.hibernate.exeption.DataProcessingException;
+import ma.hibernate.model.Phone;
+import ma.hibernate.util.HibernateUtil;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
+
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Path;
+import javax.persistence.criteria.Root;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import ma.hibernate.model.Phone;
-import org.hibernate.SessionFactory;
 
 public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
     public PhoneDaoImpl(SessionFactory sessionFactory) {
@@ -12,11 +22,28 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
 
     @Override
     public Phone create(Phone phone) {
-        return null;
+        Session session = null;
+        Transaction transaction = null;
+        try {
+            session = factory.openSession();
+            transaction = session.beginTransaction();
+            session.save(phone);
+            transaction.commit();
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            throw new DataProcessingException("Can't create phone " + phone, e);
+        } finally {
+            if (session != null) {
+                session.close();
+            }
+        }
+        return phone;
     }
 
     @Override
     public List<Phone> findAll(Map<String, String[]> params) {
-        return null;
+        return Collections.emptyList();
     }
 }
