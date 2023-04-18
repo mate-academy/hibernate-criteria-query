@@ -2,16 +2,11 @@ package ma.hibernate.dao;
 
 import ma.hibernate.exeption.DataProcessingException;
 import ma.hibernate.model.Phone;
-import ma.hibernate.util.HibernateUtil;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Path;
-import javax.persistence.criteria.Root;
-import java.util.Collections;
+import javax.persistence.criteria.*;
 import java.util.List;
 import java.util.Map;
 
@@ -44,6 +39,33 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
 
     @Override
     public List<Phone> findAll(Map<String, String[]> params) {
-        return Collections.emptyList();
+        Session session = null;
+        try {
+            session = factory.openSession();
+            CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+
+            CriteriaQuery<Phone> query = criteriaBuilder.createQuery(Phone.class);
+
+            Root<Phone> phoneRoot = query.from(Phone.class);
+            Predicate equal = null;
+            CriteriaBuilder.In<String> in = null;
+            for (Map.Entry<String, String[]> param : params.entrySet()) {
+
+                equal = criteriaBuilder.equal(phoneRoot.get(param.getKey()), param.getKey());
+
+                for (String val : param.getValue()) {
+                    in = criteriaBuilder.in(phoneRoot.get(val));
+                }
+            }
+            query.where((Predicate) query, in);
+
+            return session.createQuery(query).getResultList();
+        } catch (Exception e) {
+            throw new DataProcessingException("Can't findAll phone ", e);
+        } finally {
+            if (session != null) {
+                session.close();
+            }
+        }
     }
 }
