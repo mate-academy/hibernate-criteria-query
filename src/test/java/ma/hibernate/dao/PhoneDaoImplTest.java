@@ -14,7 +14,7 @@ import org.junit.Test;
 
 public class PhoneDaoImplTest extends AbstractTest {
     private static final String PATH_TO_PHONE_DAO_IMPL_JAVA_CLASS =
-            "src/main/java/ma/hibernate/dao/PhoneDaoImpl.java";
+            "src/Main/java/ma/hibernate/dao/PhoneDaoImpl.java";
     private static final int MAX_NUMBER_OF_FOR_LOOPS_IN_FIND_ALL_METHOD = 2;
     private static String findAllMethodContent;
     private Map<String, String[]> params;

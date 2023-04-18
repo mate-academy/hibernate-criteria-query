@@ -1,14 +1,18 @@
 package ma.hibernate.dao;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import ma.hibernate.exeption.DataProcessingException;
 import ma.hibernate.model.Phone;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-
-import javax.persistence.criteria.*;
-import java.util.List;
-import java.util.Map;
 
 public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
     public PhoneDaoImpl(SessionFactory sessionFactory) {
@@ -39,33 +43,21 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
 
     @Override
     public List<Phone> findAll(Map<String, String[]> params) {
-        Session session = null;
-        try {
-            session = factory.openSession();
-            CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
-
+        try (Session session = factory.openSession()) {
+            CriteriaBuilder criteriaBuilder = factory.getCriteriaBuilder();
             CriteriaQuery<Phone> query = criteriaBuilder.createQuery(Phone.class);
+            Root<Phone> root = query.from(Phone.class);
 
-            Root<Phone> phoneRoot = query.from(Phone.class);
-            Predicate equal = null;
-            CriteriaBuilder.In<String> in = null;
+            List<Predicate> predicates = new ArrayList<>();
             for (Map.Entry<String, String[]> param : params.entrySet()) {
-
-                equal = criteriaBuilder.equal(phoneRoot.get(param.getKey()), param.getKey());
-
-                for (String val : param.getValue()) {
-                    in = criteriaBuilder.in(phoneRoot.get(val));
-                }
+                CriteriaBuilder.In<Object> in = criteriaBuilder.in(root.get(param.getKey()));
+                Arrays.stream(param.getValue()).forEach(in::value);
+                predicates.add(in);
             }
-            query.where((Predicate) query, in);
-
+            query.where(predicates.toArray(new Predicate[0]));
             return session.createQuery(query).getResultList();
         } catch (Exception e) {
-            throw new DataProcessingException("Can't findAll phone ", e);
-        } finally {
-            if (session != null) {
-                session.close();
-            }
+            throw new DataProcessingException("Can't findAll phone by parameters ", e);
         }
     }
 }
