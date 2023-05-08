@@ -6,6 +6,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+
 import ma.hibernate.exception.DataProcessingException;
 import ma.hibernate.model.Phone;
 import org.hibernate.Session;
@@ -51,6 +52,8 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
             }
             query = query.where(predicate);
             return session.createQuery(query).getResultList();
+        } catch (Exception e) {
+            throw new RuntimeException("Can't findAll phones", e);
         }
     }
 }
