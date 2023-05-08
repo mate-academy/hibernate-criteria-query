@@ -45,17 +45,9 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
             CriteriaBuilder cb = session.getCriteriaBuilder();
             CriteriaQuery<Phone> query = cb.createQuery(Phone.class);
             Root<Phone> phoneRoot = query.from(Phone.class);
-            List<CriteriaBuilder.In<String>> criteraBuilderList = new ArrayList<>();
-            for (Map.Entry<String, String[]> stringEntry : params.entrySet()) {
-                CriteriaBuilder.In<String> predicate = cb.in(phoneRoot.get(stringEntry.getKey()));
-                for (String value : stringEntry.getValue()) {
-                    predicate.value(value);
-                }
-                criteraBuilderList.add(predicate);
-            }
             Predicate predicate = cb.and();
-            for (CriteriaBuilder.In<String> stringIn : criteraBuilderList) {
-                predicate = cb.and(stringIn, predicate);
+            for (Map.Entry<String, String[]> entry : params.entrySet()) {
+                predicate = cb.and(predicate, phoneRoot.get(entry.getKey()).in(entry.getValue()));
             }
             query = query.where(predicate);
             return session.createQuery(query).getResultList();
