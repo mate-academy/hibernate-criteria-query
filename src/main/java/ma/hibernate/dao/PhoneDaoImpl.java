@@ -10,9 +10,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 
 public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
     public PhoneDaoImpl(SessionFactory sessionFactory) {
@@ -51,13 +49,15 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
             for (Map.Entry<String, String[]> stringEntry : params.entrySet()) {
                 CriteriaBuilder.In<String> predicate = cb.in(phoneRoot.get(stringEntry.getKey()));
                 for (String value : stringEntry.getValue()) {
-                    System.out.println(value);
                     predicate.value(value);
                 }
                 criteraBuilderList.add(predicate);
             }
-            cb.and(criteraBuilderList.get(0),criteraBuilderList.get(1));
-            session.createQuery(query).getResultList().forEach(System.out::println);
+            Predicate predicate = cb.and();
+            for (CriteriaBuilder.In<String> stringIn : criteraBuilderList) {
+                predicate = cb.and(stringIn, predicate);
+            }
+            query = query.where(predicate);
             return session.createQuery(query).getResultList();
         }
     }
