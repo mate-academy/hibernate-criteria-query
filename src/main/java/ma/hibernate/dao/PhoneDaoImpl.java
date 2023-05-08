@@ -1,7 +1,6 @@
 package ma.hibernate.dao;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -13,7 +12,6 @@ import org.hibernate.Transaction;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Root;
 
 public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
@@ -49,23 +47,18 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
             CriteriaBuilder cb = session.getCriteriaBuilder();
             CriteriaQuery<Phone> query = cb.createQuery(Phone.class);
             Root<Phone> phoneRoot = query.from(Phone.class);
-            List<Expression> list = new ArrayList();
-            for (Map.Entry<String, String[]> param : params.entrySet()) {
-                for (String key : params.keySet()) {
-
-                    CriteriaBuilder.In<String> predicate = cb.in(phoneRoot.get(key));
-                    String[] values = param.getValue();
-
-                    for (String currentValue : values) {
-                        predicate.value(currentValue);
-                    }
-
-                    list.add(predicate);
+            List<CriteriaBuilder.In<String>> criteraBuilderList = new ArrayList<>();
+            for (Map.Entry<String, String[]> stringEntry : params.entrySet()) {
+                CriteriaBuilder.In<String> predicate = cb.in(phoneRoot.get(stringEntry.getKey()));
+                for (String value : stringEntry.getValue()) {
+                    System.out.println(value);
+                    predicate.value(value);
                 }
+                criteraBuilderList.add(predicate);
             }
-            System.out.println(list.size());
+            cb.and(criteraBuilderList.get(0),criteraBuilderList.get(1));
+            session.createQuery(query).getResultList().forEach(System.out::println);
+            return session.createQuery(query).getResultList();
         }
-
-        return null;
     }
 }
