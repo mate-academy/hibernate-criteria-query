@@ -6,6 +6,7 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import ma.hibernate.dao.impl.PhoneDaoImpl;
 import ma.hibernate.model.Phone;
 import org.junit.Assert;
 import org.junit.Before;
@@ -14,7 +15,7 @@ import org.junit.Test;
 
 public class PhoneDaoImplTest extends AbstractTest {
     private static final String PATH_TO_PHONE_DAO_IMPL_JAVA_CLASS =
-            "src/main/java/ma/hibernate/dao/PhoneDaoImpl.java";
+            "src/main/java/ma/hibernate/dao/impl/PhoneDaoImpl.java";
     private static final int MAX_NUMBER_OF_FOR_LOOPS_IN_FIND_ALL_METHOD = 2;
     private static String findAllMethodContent;
     private Map<String, String[]> params;
