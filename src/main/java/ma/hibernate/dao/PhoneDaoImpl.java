@@ -1,17 +1,14 @@
 package ma.hibernate.dao;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import ma.hibernate.model.Phone;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
-
 import org.hibernate.Transaction;
 
 public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
@@ -47,26 +44,12 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
             CriteriaBuilder cb = session.getCriteriaBuilder();
             CriteriaQuery<Phone> query = cb.createQuery(Phone.class);
             Root<Phone> phoneRoot = query.from(Phone.class);
-
-            CriteriaBuilder.In<String> countryPredicate = cb.in(phoneRoot.get("countryManufactured"));
-            String[] countries = params.get("countryManufactured");
-            for (String country : countries) {
-                countryPredicate.value(country);
+            Predicate predicate = cb.conjunction();
+            for (Map.Entry<String, String[]> entry : params.entrySet()) {
+                predicate = cb.and(predicate, phoneRoot.get(entry.getKey())
+                        .in(entry.getValue()));
             }
-
-            CriteriaBuilder.In<String> makerPredicate = cb.in(phoneRoot.get("maker"));
-            String[] makers = params.get("maker");
-            for (String maker : makers) {
-                makerPredicate.value(maker);
-            }
-
-            CriteriaBuilder.In<String> colorPredicate = cb.in(phoneRoot.get("color"));
-            String[] colors = params.get("color");
-            for (String color : colors) {
-                colorPredicate.value(color);
-            }
-
-            cb.and(colorPredicate, makerPredicate, colorPredicate);
+            query.where(predicate);
             return session.createQuery(query).getResultList();
         }
     }
