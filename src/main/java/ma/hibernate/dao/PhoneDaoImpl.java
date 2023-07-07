@@ -2,10 +2,9 @@ package ma.hibernate.dao;
 
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
-import java.util.function.Predicate;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import ma.hibernate.model.Phone;
 import org.hibernate.Session;
@@ -45,16 +44,18 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
             CriteriaBuilder cb = session.getCriteriaBuilder();
             CriteriaQuery<Phone> query = cb.createQuery(Phone.class);
             Root<Phone> phoneRoot = query.from(Phone.class);
-            for (Map.Entry<String, String[]> entry: params.entrySet()) {
+            Predicate[] predicates = new Predicate[params.size()];
+            int i = 0;
+            for (Map.Entry<String, String[]> entry : params.entrySet()) {
                 CriteriaBuilder.In<Object> in = cb.in(phoneRoot.get(entry.getKey()));
-                for (String value: entry.getValue()) {
+                for (String value : entry.getValue()) {
                     in.value(value);
                 }
-                cb.and(in);
-                query.where(cb.or(in));
+                predicates[i] = cb.and(in);
+                i++;
             }
-
+            query.where(cb.and(predicates));
+            return session.createQuery(query).getResultList();
         }
-        return null;
     }
 }
