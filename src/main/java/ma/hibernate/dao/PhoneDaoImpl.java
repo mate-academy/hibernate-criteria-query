@@ -54,7 +54,8 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
 
             Predicate finalPredicate = builder.and();
             for (Map.Entry<String, String[]> map : params.entrySet()) {
-                finalPredicate = builder.and(finalPredicate, root.get(map.getKey()).in(List.of(map.getValue())));
+                finalPredicate = builder.and(
+                        finalPredicate, root.get(map.getKey()).in(List.of(map.getValue())));
             }
 
             //for (Map.Entry<String, String[]> map : params.entrySet()) {
