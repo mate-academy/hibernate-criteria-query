@@ -53,7 +53,8 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
                 }
                 predicates.add(inPredicate);
             }
-            Predicate sumOfPredicates = cb.and(predicates.toArray(new Predicate[predicates.size()]));
+            Predicate sumOfPredicates =
+                    cb.and(predicates.toArray(new Predicate[predicates.size()]));
             query.where(sumOfPredicates);
             return session.createQuery(query).getResultList();
         } catch (Exception e) {
