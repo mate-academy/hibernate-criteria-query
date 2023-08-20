@@ -24,7 +24,7 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
         try {
             session = factory.openSession();
             transaction = session.beginTransaction();
-            session.save(phone);
+            session.persist(phone);
             transaction.commit();
             return phone;
         } catch (Exception e) {
