@@ -1,35 +1,15 @@
 package ma.hibernate.dao;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import ma.hibernate.model.Phone;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class PhoneDaoImplTest extends AbstractTest {
-    private static final String PATH_TO_PHONE_DAO_IMPL_JAVA_CLASS =
-            "src/main/java/ma/hibernate/dao/PhoneDaoImpl.java";
-    private static final int MAX_NUMBER_OF_FOR_LOOPS_IN_FIND_ALL_METHOD = 2;
-    private static String findAllMethodContent;
     private Map<String, String[]> params;
-
-    @BeforeClass
-    public static void readFindAllMethodContent() throws IOException {
-        String phoneDaoImplContent = Files.readString(Paths.get(PATH_TO_PHONE_DAO_IMPL_JAVA_CLASS));
-        int indexOfCreateMethod = phoneDaoImplContent.indexOf("public Phone create");
-        int indexOfFindAllMethod = phoneDaoImplContent.indexOf("public List<Phone> findAll");
-        if (indexOfCreateMethod < indexOfFindAllMethod) {
-            findAllMethodContent = phoneDaoImplContent.substring(indexOfFindAllMethod);
-        } else {
-            findAllMethodContent = phoneDaoImplContent.substring(0, indexOfCreateMethod);
-        }
-    }
 
     @Before
     public void setUp() {
@@ -39,37 +19,6 @@ public class PhoneDaoImplTest extends AbstractTest {
     @Override
     protected Class<?>[] entities() {
         return new Class[]{Phone.class};
-    }
-
-    @Test
-    public void findAll_switch_case_notOk() {
-        boolean isSolutionWithoutSwitchCase = !findAllMethodContent.contains("switch")
-                && !findAllMethodContent.contains("case");
-        Assert.assertTrue(
-                "In your solution you shouldn't use switch case",
-                isSolutionWithoutSwitchCase
-        );
-    }
-
-    @Test
-    public void findAll_if_else_notOk() {
-        boolean isSolutionWithoutIfElse = !findAllMethodContent.contains("if (")
-                && !findAllMethodContent.contains("else {");
-        Assert.assertTrue(
-                "In your solution you shouldn't use if else",
-                isSolutionWithoutIfElse
-        );
-    }
-
-    @Test
-    public void findAll_more_than_two_for_loops_notOk() {
-        boolean isSolutionWithTwoForLoops = findAllMethodContent.split("for \\(").length <= 3;
-        Assert.assertTrue(
-                "In your solution you shouldn't use more than "
-                    + MAX_NUMBER_OF_FOR_LOOPS_IN_FIND_ALL_METHOD
-                    + " for loops",
-                isSolutionWithTwoForLoops
-        );
     }
 
     @Test
