@@ -7,7 +7,6 @@ import jakarta.persistence.criteria.Root;
 import java.util.List;
 import java.util.Map;
 import ma.hibernate.model.Phone;
-import ma.hibernate.util.HibernateUtil;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -23,7 +22,7 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
         Transaction transaction = null;
         Session session = null;
         try {
-            session = HibernateUtil.getSessionFactory().openSession();
+            session = factory.openSession();
             transaction = session.beginTransaction();
             session.persist(phone);
             transaction.commit();
@@ -42,12 +41,10 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
 
     @Override
     public List<Phone> findAll(Map<String, String[]> params) {
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-
+        try (Session session = factory.openSession()) {
             CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
             CriteriaQuery<Phone> query = criteriaBuilder.createQuery(Phone.class);
             Root<Phone> phoneRoot = query.from(Phone.class);
-
             Predicate predicate = criteriaBuilder.conjunction();
             for (Map.Entry<String, String[]> entry : params.entrySet()) {
                 predicate = criteriaBuilder.and(predicate, phoneRoot.get(entry.getKey())
