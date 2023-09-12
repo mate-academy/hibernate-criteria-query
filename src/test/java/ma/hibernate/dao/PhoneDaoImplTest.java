@@ -232,19 +232,19 @@ public class PhoneDaoImplTest extends AbstractTest {
         Phone samsungA5 = (Phone) Phones.samsungA5.clone();
         verifyCreatePhoneWorks(phoneDao, samsungA5, 3L);
 
-        Phone samsungA7White = (Phone) Phones.samsungA7White.clone();
+        Phone samsungA7White = (Phone) Phones.SAMSUNGA7WHITE.clone();
         verifyCreatePhoneWorks(phoneDao, samsungA7White, 4L);
 
-        Phone samsungA7Red = (Phone) Phones.samsungA7Red.clone();
+        Phone samsungA7Red = (Phone) Phones.SAMSUNGA7RED.clone();
         verifyCreatePhoneWorks(phoneDao, samsungA7Red, 5L);
 
-        Phone samsungA7Black = (Phone) Phones.samsungA7Black.clone();
+        Phone samsungA7Black = (Phone) Phones.SAMSUNGA7BLACK.clone();
         verifyCreatePhoneWorks(phoneDao, samsungA7Black, 6L);
 
-        Phone oppo10white = (Phone) Phones.oppo10white.clone();
+        Phone oppo10white = (Phone) Phones.OPPO10WHITE.clone();
         verifyCreatePhoneWorks(phoneDao, oppo10white, 7L);
 
-        Phone xiaomiRedmi5 = (Phone) Phones.xiaomiRedmi5.clone();
+        Phone xiaomiRedmi5 = (Phone) Phones.XIOMIREDMI5.clone();
         verifyCreatePhoneWorks(phoneDao, xiaomiRedmi5, 8L);
     }
 
