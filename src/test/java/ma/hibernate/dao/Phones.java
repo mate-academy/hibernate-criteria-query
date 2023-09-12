@@ -3,8 +3,8 @@ package ma.hibernate.dao;
 import ma.hibernate.model.Phone;
 
 public class Phones {
-    public static final Phone iphoneX = new Phone();
-    public static final Phone iphone7 = new Phone();
+    public static final Phone IPHONEX = new Phone();
+    public static final Phone IPHONE7 = new Phone();
     public static final Phone samsungA5 = new Phone();
     public static final Phone samsungA7White = new Phone();
     public static final Phone samsungA7Red = new Phone();
@@ -14,18 +14,18 @@ public class Phones {
 
     static {
         // iPhoneX
-        iphoneX.setModel("iPhone X");
-        iphoneX.setColor("red");
-        iphoneX.setMaker("Apple");
-        iphoneX.setOs("iOS");
-        iphoneX.setCountryManufactured("USA");
+        IPHONEX.setModel("iPhone X");
+        IPHONEX.setColor("red");
+        IPHONEX.setMaker("Apple");
+        IPHONEX.setOs("iOS");
+        IPHONEX.setCountryManufactured("USA");
 
         // iPhone7
-        iphone7.setModel("iPhone 7");
-        iphone7.setColor("white");
-        iphone7.setMaker("Apple");
-        iphone7.setOs("iOS");
-        iphone7.setCountryManufactured("USA");
+        IPHONE7.setModel("iPhone 7");
+        IPHONE7.setColor("white");
+        IPHONE7.setMaker("Apple");
+        IPHONE7.setOs("iOS");
+        IPHONE7.setCountryManufactured("USA");
 
         // samsungA5
         samsungA5.setModel("A5");

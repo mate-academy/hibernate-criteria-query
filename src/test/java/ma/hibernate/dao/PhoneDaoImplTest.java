@@ -223,10 +223,10 @@ public class PhoneDaoImplTest extends AbstractTest {
     }
 
     private void insertPhones(PhoneDao phoneDao) {
-        Phone iphoneX = (Phone) Phones.iphoneX.clone();
+        Phone iphoneX = (Phone) Phones.IPHONEX.clone();
         verifyCreatePhoneWorks(phoneDao, iphoneX, 1L);
 
-        Phone iphone7 = (Phone) Phones.iphone7.clone();
+        Phone iphone7 = (Phone) Phones.IPHONE7.clone();
         verifyCreatePhoneWorks(phoneDao, iphone7, 2L);
 
         Phone samsungA5 = (Phone) Phones.samsungA5.clone();
