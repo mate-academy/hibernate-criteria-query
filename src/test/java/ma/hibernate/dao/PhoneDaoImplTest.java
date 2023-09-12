@@ -229,7 +229,7 @@ public class PhoneDaoImplTest extends AbstractTest {
         Phone iphone7 = (Phone) Phones.IPHONE7.clone();
         verifyCreatePhoneWorks(phoneDao, iphone7, 2L);
 
-        Phone samsungA5 = (Phone) Phones.samsungA5.clone();
+        Phone samsungA5 = (Phone) Phones.SAMSUNGA5.clone();
         verifyCreatePhoneWorks(phoneDao, samsungA5, 3L);
 
         Phone samsungA7White = (Phone) Phones.SAMSUNGA7WHITE.clone();
