@@ -41,46 +41,6 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
 
     @Override
     public List<Phone> findAll(Map<String, String[]> params) {
-        Transaction transaction = null;
-        try (Session session = factory.openSession()) {
-            transaction = session.beginTransaction();
-
-            CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
-            CriteriaQuery<Phone> query = criteriaBuilder.createQuery(Phone.class);
-            Root<Phone> root = query.from(Phone.class);
-            Predicate predicate = criteriaBuilder.conjunction();
-
-            String[] countryManufacturedValues = params.get("countryManufactured");
-            String[] producerValues = params.get("producer");
-            String[] colorValues = params.get("color");
-
-            if (countryManufacturedValues != null && countryManufacturedValues.length > 0) {
-                predicate = criteriaBuilder.and(predicate,
-                        root.get("countryManufactured").in((Object[]) countryManufacturedValues));
-            }
-
-            if (producerValues != null && producerValues.length > 0) {
-                predicate = criteriaBuilder.and(predicate,
-                        root.get("producer").in((Object[]) producerValues));
-            }
-
-            if (colorValues != null && colorValues.length > 0) {
-                predicate = criteriaBuilder.and(predicate,
-                        root.get("color").in((Object[]) colorValues));
-            }
-
-            query.select(root); // Вибрати всі поля екземплярів Phone
-            query.where(predicate);
-
-            List<Phone> phones = session.createQuery(query).getResultList();
-
-            transaction.commit();
-            return phones;
-        } catch (Exception e) {
-            if (transaction != null) {
-                transaction.rollback();
-            }
-            throw new RuntimeException("Error while finding phones", e);
-        }
+        return null;
     }
 }
