@@ -4,6 +4,8 @@ import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import ma.hibernate.model.Phone;
@@ -45,19 +47,13 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
             CriteriaQuery<Phone> query = cb.createQuery(Phone.class);
             Root<Phone> phoneRoot = query.from(Phone.class);
 
-            Predicate prevPredicate = null;
-            boolean flag = true;
-
+            List<Predicate> predicates = new ArrayList<>();
             for (Map.Entry<String, String[]> en : params.entrySet()) {
                 CriteriaBuilder.In<String> paramPredicate = cb.in(phoneRoot.get(en.getKey()));
-                for (String s : en.getValue()) {
-                    paramPredicate.value(s);
-                }
-                prevPredicate = flag ? paramPredicate : cb.and(prevPredicate, paramPredicate);
-                flag = false;
+                Arrays.stream(en.getValue()).forEach(paramPredicate::value);
+                predicates.add(paramPredicate);
             }
-
-            query = prevPredicate == null ? query : query.where(cb.and(prevPredicate));
+            query.where(cb.and(predicates.toArray(Predicate[]::new)));
             return session.createQuery(query).getResultList();
         } catch (Exception e) {
             throw new RuntimeException("Can't get phones by params from db", e);
