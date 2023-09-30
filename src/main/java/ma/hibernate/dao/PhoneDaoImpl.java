@@ -31,7 +31,7 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
             CriteriaBuilder.In<String> color = cb.in(phoneRoot.get("color"));
 
             Predicate[] predicates = params.entrySet().stream()
-                    .map(e -> phoneRoot.get(e.getKey()).in((Object) e.getValue()))
+                    .map(e -> phoneRoot.get(e.getKey()).in(e.getValue()))
                     .toArray(Predicate[]::new);
             query.where(predicates);
             return session.createQuery(query).getResultList();
