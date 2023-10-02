@@ -31,10 +31,10 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
             CriteriaBuilder cb = session.getCriteriaBuilder();
             CriteriaQuery<Phone> query = cb.createQuery(Phone.class);
             Root<Phone> phoneRoot = query.from(Phone.class);
-            Predicate[] array = params.entrySet().stream()
+            Predicate[] predicates = params.entrySet().stream()
                     .map(e -> phoneRoot.get(e.getKey()).in(e.getValue()))
                     .toArray(Predicate[]::new);
-            query.where(array);
+            query.where(predicates);
             return session.createQuery(query).getResultList();
         } catch (Exception e) {
             throw new RuntimeException("Can't find phones according to your parameters: "
