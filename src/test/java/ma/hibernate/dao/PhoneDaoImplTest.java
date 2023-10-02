@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import ma.hibernate.model.Phone;
+import ma.hibernate.model.dao.PhoneDao;
+import ma.hibernate.model.dao.PhoneDaoImpl;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
