@@ -1,4 +1,4 @@
-package ma.hibernate.model.dao;
+package ma.hibernate.dao;
 
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
@@ -7,7 +7,8 @@ import jakarta.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import ma.hibernate.model.Phone;
+
+import ma.hibernate.Phone;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
