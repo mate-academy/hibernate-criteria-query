@@ -7,7 +7,6 @@ import jakarta.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
 import ma.hibernate.Phone;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
