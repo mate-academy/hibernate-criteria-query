@@ -75,7 +75,7 @@ public class Phone implements Cloneable {
 
     @Override
     public String toString() {
-        return "Phone{"
+        return "ma.hibernate.model.Phone{"
             + "id=" + id
             + ", model='" + model + '\''
             + ", maker='" + maker + '\''
