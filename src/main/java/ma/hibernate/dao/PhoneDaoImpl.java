@@ -1,11 +1,10 @@
 package ma.hibernate.dao;
 
-import java.util.List;
-import java.util.Map;
-
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Root;
+import java.util.List;
+import java.util.Map;
 import ma.hibernate.model.Phone;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -54,13 +53,13 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
             for (String maker : makers) {
                 makerPredicate.value(maker);
             }
-            CriteriaBuilder.In<String> colorPredicate = cb.
-                    in(phoneRoot.get("color"));
+            CriteriaBuilder.In<String> colorPredicate = cb
+                    .in(phoneRoot.get("color"));
             for (String color : colors) {
                 makerPredicate.value(color);
             }
-            CriteriaBuilder.In<String> countryManufacturedPredicate = cb.
-                    in(phoneRoot.get("countryManufactured"));
+            CriteriaBuilder.In<String> countryManufacturedPredicate = cb
+                    .in(phoneRoot.get("countryManufactured"));
             for (String countryManufactured : countryManufactureds) {
                 makerPredicate.value(countryManufactured);
             }
