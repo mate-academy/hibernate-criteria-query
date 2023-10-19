@@ -22,10 +22,8 @@ public class PhoneDaoImplTest extends AbstractTest {
     @BeforeClass
     public static void readFindAllMethodContent() throws IOException {
         String phoneDaoImplContent = Files.readString(Paths.get(PATH_TO_PHONE_DAO_IMPL_JAVA_CLASS));
-        int indexOfCreateMethod = phoneDaoImplContent
-                .indexOf("public ma.hibernate.model.Phone create");
-        int indexOfFindAllMethod = phoneDaoImplContent
-                .indexOf("public List<ma.hibernate.model.Phone> findAll");
+        int indexOfCreateMethod = phoneDaoImplContent.indexOf("public ma.hibernate.model.Phone create");
+        int indexOfFindAllMethod = phoneDaoImplContent.indexOf("public List<ma.hibernate.model.Phone> findAll");
         if (indexOfCreateMethod < indexOfFindAllMethod) {
             findAllMethodContent = phoneDaoImplContent.substring(indexOfFindAllMethod);
         } else {
