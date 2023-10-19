@@ -15,8 +15,6 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
         super(sessionFactory);
     }
 
-
-
     @Override
     public Phone create(Phone phone) {
         Session session = null;
