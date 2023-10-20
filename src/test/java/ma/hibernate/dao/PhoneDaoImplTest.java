@@ -6,7 +6,6 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import ma.hibernate.model.Phone;
 import org.junit.Assert;
 import org.junit.Before;
