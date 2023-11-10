@@ -1,14 +1,10 @@
 package ma.hibernate.dao;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Expression;
-import jakarta.persistence.criteria.Path;
-import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
+import java.util.List;
+import java.util.Map;
 import ma.hibernate.model.Phone;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -47,26 +43,25 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
             CriteriaBuilder cb = session.getCriteriaBuilder();
             CriteriaQuery<Phone> query = cb.createQuery(Phone.class);
             Root<Phone> root = query.from(Phone.class);
-            Predicate [] predicate = new Predicate[3];
             CriteriaBuilder.In<String> maker = cb.in(root.get("maker"));
             CriteriaBuilder.In<String> model = cb.in(root.get("model"));
             CriteriaBuilder.In<String> color = cb.in(root.get("color"));
-            CriteriaBuilder.In<Object> countryManufactured = cb.in(root.get("countryManufactured"));
+            CriteriaBuilder.In<String> countryManufactured = cb.in(root.get("countryManufactured"));
             for (Map.Entry<String,String[]> mapsElem : params.entrySet()) {
                 for (String element: mapsElem.getValue()) {
-                    countryManufactured.value(element);
                     model.value(element);
                     maker.value(element);
                     color.value(element);
-                    predicate[0] = cb.equal(root.get("model"), element);
+                    countryManufactured.value(element);
                 }
             }
-          //  predicate[2] = cb.and(maker,model);
-            predicate[1] = cb.and(maker,color,countryManufactured);
-            query.where(cb.or(model,predicate[1]));
-            List<Phone> resultList = session.createQuery(query).getResultList();
-            System.out.println(resultList);
-            return resultList;
+            CriteriaQuery<Phone> querys = params.isEmpty() ? query.where() :
+                    params.containsKey("countryManufactured")
+                            && params.containsKey("color")
+                            ? query.where(cb.and(maker,color,countryManufactured)) :
+                    params.containsKey("color") ? query.where(cb.and(maker,color)) :
+                            query.where(cb.or(model,maker));
+            return session.createQuery(querys).getResultList();
         }
     }
 }
