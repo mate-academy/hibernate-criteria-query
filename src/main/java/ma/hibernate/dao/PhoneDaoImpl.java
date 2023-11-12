@@ -2,6 +2,7 @@ package ma.hibernate.dao;
 
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import java.util.List;
 import java.util.Map;
@@ -43,25 +44,16 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
             CriteriaBuilder cb = session.getCriteriaBuilder();
             CriteriaQuery<Phone> query = cb.createQuery(Phone.class);
             Root<Phone> root = query.from(Phone.class);
-            CriteriaBuilder.In<String> maker = cb.in(root.get("maker"));
-            CriteriaBuilder.In<String> model = cb.in(root.get("model"));
-            CriteriaBuilder.In<String> color = cb.in(root.get("color"));
-            CriteriaBuilder.In<String> countryManufactured = cb.in(root.get("countryManufactured"));
+            Predicate mainPredicate = cb.and();
             for (Map.Entry<String,String[]> mapsElem : params.entrySet()) {
+                CriteriaBuilder.In<Object> in = cb.in(root.get(mapsElem.getKey()));
                 for (String element: mapsElem.getValue()) {
-                    model.value(element);
-                    maker.value(element);
-                    color.value(element);
-                    countryManufactured.value(element);
+                    in.value(element);
                 }
+                mainPredicate = cb.and(mainPredicate,in);
             }
-            CriteriaQuery<Phone> querys = params.isEmpty() ? query.where() :
-                    params.containsKey("countryManufactured")
-                            && params.containsKey("color")
-                            ? query.where(cb.and(maker,color,countryManufactured)) :
-                    params.containsKey("color") ? query.where(cb.and(maker,color)) :
-                            query.where(cb.or(model,maker));
-            return session.createQuery(querys).getResultList();
+            query.where(mainPredicate);
+            return session.createQuery(query).getResultList();
         }
     }
 }
