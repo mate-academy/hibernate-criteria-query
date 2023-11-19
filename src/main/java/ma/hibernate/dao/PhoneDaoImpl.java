@@ -1,14 +1,13 @@
 package ma.hibernate.dao;
 
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Root;
 import ma.hibernate.model.Phone;
-import ma.hibernate.util.HibernateUtil;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -38,47 +37,27 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
 
     @Override
     public List<Phone> findAll(Map<String, String[]> params) {
-        SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
-        try (Session session = sessionFactory.openSession()) {
+        try (Session session = factory.openSession()) {
             CriteriaBuilder cb = session.getCriteriaBuilder();
-            CriteriaQuery<Phone> query =cb.createQuery(Phone.class);
+            CriteriaQuery<Phone> query = cb.createQuery(Phone.class);
             Root<Phone> from = query.from(Phone.class);
-            CriteriaBuilder.In<String> modelPredicate = cb.in(from.get("model"));
-            CriteriaBuilder.In<String> makerPredicate = cb.in(from.get("maker"));
-            CriteriaBuilder.In<String> colorPredicate = cb.in(from.get("color"));
-            CriteriaBuilder.In<String> osPredicate = cb.in(from.get("os"));
-            CriteriaBuilder.In<String> countyPredicate = cb.in(from.get("countryManufactured"));
-            for (Map.Entry<String,String[]> entry : params.entrySet()) {
-                if (entry.getKey().equals("model")) {
-                    for (String model : entry.getValue()) {
-                        modelPredicate.value(model);
-                    }
-                }
-                if (entry.getKey().equals("maker")) {
-                    for (String maker : entry.getValue()) {
-                        makerPredicate.value(maker);
-                    }
-                }
-                if (entry.getKey().equals("color")) {
-                    for (String color : entry.getValue()) {
-                        colorPredicate.value(color);
-                    }
-                }
-                if (entry.getKey().equals("os")) {
-                    for (String os : entry.getValue()){
-                        osPredicate.value(os);
-                    }
-                }
-                if (entry.getKey().equals("countryManufactured")) {
-                    for (String contyManu : entry.getValue()) {
-                        countyPredicate.value(contyManu);
-                    }
-                }
-            }
-            query.where(cb.or(modelPredicate, makerPredicate, colorPredicate, osPredicate, countyPredicate));
+
+            Predicate[] predicates = params.entrySet().stream()
+                    .filter(entry -> entry.getValue() != null && entry.getValue().length > 0)
+                    .map(entry -> {
+                        String key = entry.getKey();
+                        String[] values = entry.getValue();
+                        CriteriaBuilder.In<String> predicate = cb.in(from.get(key));
+                        Arrays.stream(values).forEach(predicate::value);
+                        return predicate;
+                    })
+                    .toArray(Predicate[]::new);
+
+            query.where(cb.and(predicates));
+
             return session.createQuery(query).getResultList();
-        } catch (Exception e ) {
-            throw new RuntimeException("can't find all in ");
+        } catch (Exception e) {
+            throw new RuntimeException("Can't find all", e);
         }
     }
 }
