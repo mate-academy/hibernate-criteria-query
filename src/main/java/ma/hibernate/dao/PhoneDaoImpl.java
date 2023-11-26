@@ -41,12 +41,15 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
     @Override
     public List<Phone> findAll(Map<String, String[]> params) {
         try (Session session = factory.openSession()) {
+            //
             CriteriaBuilder cb = session.getCriteriaBuilder();
             CriteriaQuery<Phone> query = cb.createQuery(Phone.class);
             Root<Phone> phoneRoot = query.from(Phone.class);
 
+            //
             Predicate phonePredicate = null;
 
+            //
             for (Map.Entry<String, String[]> stringEntry : params.entrySet()) {
                 CriteriaBuilder.In<String> entryPredicate =
                         cb.in(phoneRoot.get(stringEntry.getKey()));
@@ -60,6 +63,7 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
                         : cb.and(phonePredicate, entryPredicate);
             }
 
+            //
             return phonePredicate == null
                     ? session.createQuery(query).getResultList()
                     : session.createQuery(query.where(phonePredicate)).getResultList();
