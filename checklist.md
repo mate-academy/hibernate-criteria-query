@@ -8,13 +8,13 @@
             throw new RuntimeException("Can't create phone");
          }
      ```
-     - Good:
-     ```java
-         } catch (Exception e) {
-            ...
-            throw new RuntimeException("Can't create phone " + phone, e);
-         }
-      ```
+    - Good:
+    ```java
+        } catch (Exception e) {
+           ...
+           throw new RuntimeException("Can't create phone " + phone, e);
+        }
+     ```
 
 * Don't create redundant variables.
 
