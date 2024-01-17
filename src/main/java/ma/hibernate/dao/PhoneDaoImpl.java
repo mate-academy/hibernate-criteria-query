@@ -57,7 +57,5 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
             query.where(cb.and(predicatesArray));
             return session.createQuery(query).getResultList();
         }
-
-
     }
 }
