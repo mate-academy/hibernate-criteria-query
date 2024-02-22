@@ -4,11 +4,9 @@ import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import ma.hibernate.model.Phone;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -55,11 +53,7 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
                 }
                 in.add(currentPredicate);
             }
-            try {
-                query.where(cb.and(in.iterator().next()));
-            } catch (NoSuchElementException nsee) {
-                return session.createQuery(query).getResultList();
-            }
+            query.where(in.toArray(new Predicate[0]));
             return session.createQuery(query).getResultList();
         }
     }
