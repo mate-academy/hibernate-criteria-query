@@ -23,9 +23,8 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
         try {
             session = factory.openSession();
             transaction = session.beginTransaction();
-            session.save(phone);
+            session.persist(phone);
             transaction.commit();
-            session.close();
         } catch (Exception e) {
             if (transaction != null) {
                 transaction.rollback();
@@ -45,16 +44,15 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
             CriteriaBuilder cb = session.getCriteriaBuilder();
             CriteriaQuery<Phone> phoneCriteriaQuery = cb.createQuery(Phone.class);
             Root<Phone> phoneRoot = phoneCriteriaQuery.from(Phone.class);
-            Predicate predicate = cb.and();
-
+            Predicate predicates = cb.and();
             for (Map.Entry<String, String[]> entry : params.entrySet()) {
                 CriteriaBuilder.In<String> inParamPredicate = cb.in(phoneRoot.get(entry.getKey()));
                 for (String param : entry.getValue()) {
                     inParamPredicate.value(param);
                 }
-                predicate = cb.and(predicate, inParamPredicate);
+                predicates = cb.and(inParamPredicate, predicates);
             }
-            phoneCriteriaQuery.where(predicate);
+            phoneCriteriaQuery.where(predicates);
             return session.createQuery(phoneCriteriaQuery).getResultList();
         }
     }
