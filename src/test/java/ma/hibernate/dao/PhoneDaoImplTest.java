@@ -150,6 +150,7 @@ public class PhoneDaoImplTest extends AbstractTest {
         params.put("maker", new String[]{"Apple", "Samsung"});
         List<Phone> actualAppleAndSamsungPhones = phoneDao.findAll(params);
         Assert.assertNotNull(actualAppleAndSamsungPhones);
+        System.out.println(actualAppleAndSamsungPhones);
         Assert.assertEquals(3, actualAppleAndSamsungPhones.size());
 
         params = new HashMap<>();
