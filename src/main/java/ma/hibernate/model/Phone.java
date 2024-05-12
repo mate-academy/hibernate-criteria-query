@@ -76,12 +76,20 @@ public class Phone implements Cloneable {
     @Override
     public String toString() {
         return "Phone{"
-            + "id=" + id
-            + ", model='" + model + '\''
-            + ", maker='" + maker + '\''
-            + ", color='" + color + '\''
-            + ", os='" + os + '\''
-            + ", countryManufactured='" + countryManufactured + '\''
-            + '}';
+                + "id="
+                + id
+                + ", model='"
+                + model + '\''
+                + ", maker='"
+                + maker
+                + '\''
+                + ", color='"
+                + color + '\''
+                + ", os='"
+                + os
+                + '\''
+                + ", countryManufactured='"
+                + countryManufactured + '\''
+                + '}';
     }
 }
