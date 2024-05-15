@@ -1,23 +1,17 @@
 package ma.hibernate.dao;
 
-import java.util.List;
-import java.util.Map;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
+import java.util.List;
+import java.util.Map;
 import ma.hibernate.model.Phone;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 
 public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
-    private final static String MODEL = "model";
-    private final static String MAKER = "maker";
-    private final static String COLOR = "color";
-    private final static String OS = "os";
-    private final static String COUNTRYMANUFACTURED = "countryManufactured";
-
     public PhoneDaoImpl(SessionFactory sessionFactory) {
         super(sessionFactory);
     }
