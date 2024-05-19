@@ -1,5 +1,3 @@
-CREATE SCHEMA `criteria_query_hw` DEFAULT CHARACTER SET utf8;
-
 USE `criteria_query_hw`;
 
 CREATE TABLE `features`
