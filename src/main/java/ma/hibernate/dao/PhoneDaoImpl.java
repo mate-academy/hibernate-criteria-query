@@ -4,7 +4,6 @@ import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import ma.hibernate.model.Phone;
@@ -48,42 +47,28 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
     @Override
     public List<Phone> findAll(Map<String, String[]> params) {
         try (Session session = factory.openSession()) {
-            if (params == null || params.isEmpty()) {
-                return session.createQuery("from Phone", Phone.class).getResultList();
-            }
             CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
             CriteriaQuery<Phone> query = criteriaBuilder.createQuery(Phone.class);
             Root<Phone> phoneRoot = query.from(Phone.class);
 
             Predicate globalPredicate = null;
-            CriteriaBuilder.In<String> fieldPredicate;
-            ArrayList<String> phoneFields = getPhoneFields();
-            for (int i = 0; i < phoneFields.size(); ++i) {
-                if (params.containsKey(phoneFields.get(i))) {
-                    fieldPredicate = criteriaBuilder.in(phoneRoot.get(phoneFields.get(i)));
-                    for (String fieldValue : params.get(phoneFields.get(i))) {
-                        fieldPredicate.value(fieldValue);
-                    }
-                    globalPredicate = globalPredicate == null
-                            ? fieldPredicate : criteriaBuilder.and(globalPredicate, fieldPredicate);
+            for (String key : params.keySet()) {
+                CriteriaBuilder.In<String> fieldPredicate =
+                        criteriaBuilder.in(phoneRoot.get(key));
+                for (String fieldValue : params.get(key)) {
+                    fieldPredicate.value(fieldValue);
                 }
+                globalPredicate = globalPredicate == null
+                        ? fieldPredicate : criteriaBuilder.and(globalPredicate, fieldPredicate);
             }
 
-            query.where(globalPredicate);
-            return session.createQuery(query).getResultList();
+            return globalPredicate == null
+                    ? session.createQuery("from Phone", Phone.class).getResultList()
+                    : session.createQuery(query.where(globalPredicate)).getResultList();
+
         } catch (Exception e) {
             throw new RuntimeException("Can`t find all phones with params "
                     + params + ".Error " + e);
         }
-    }
-
-    private ArrayList<String> getPhoneFields() {
-        ArrayList<String> fields = new ArrayList<>();
-        fields.add(FIELD_MODEL);
-        fields.add(FIELD_OS);
-        fields.add(FIELD_MAKER);
-        fields.add(FIELD_COUNTRY);
-        fields.add(FIELD_COLOR);
-        return fields;
     }
 }
