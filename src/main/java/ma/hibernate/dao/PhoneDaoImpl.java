@@ -4,6 +4,7 @@ import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import ma.hibernate.model.Phone;
@@ -41,26 +42,17 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
     @Override
     public List<Phone> findAll(Map<String, String[]> params) {
         try (Session session = factory.openSession()) {
-            CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
-            CriteriaQuery<Phone> query = criteriaBuilder.createQuery(Phone.class);
-            Root<Phone> phoneRoot = query.from(Phone.class);
-
-            Predicate globalPredicate = null;
-            for (String key : params.keySet()) {
-                CriteriaBuilder.In<String> fieldCb =
-                        criteriaBuilder.in(phoneRoot.get(key));
-                for (String fieldValue : params.keySet()) {
-                    fieldCb.value(fieldValue);
-                }
-                globalPredicate = globalPredicate == null ? fieldCb :
-                        criteriaBuilder.and(globalPredicate, fieldCb);
+            CriteriaBuilder cb = session.getCriteriaBuilder();
+            CriteriaQuery query = cb.createQuery(Phone.class);
+            Root root = query.from(Phone.class);
+            List<Predicate> predicates = new ArrayList<>();
+            for (Map.Entry<String, String[]> entry : params.entrySet()) {
+                predicates.add(root.get(entry.getKey()).in(entry.getValue()));
             }
-            return globalPredicate == null
-                   ? session.createQuery("from Phone", Phone.class).getResultList()
-                   : session.createQuery(query.where(globalPredicate)).getResultList();
+            query.select(root).where(predicates.toArray(Predicate[]::new));
+            return session.createQuery(query).getResultList();
         } catch (Exception e) {
-            throw new RuntimeException("Can't find all phones with params"
-                       + params + ". Error", e);
+            throw new RuntimeException();
         }
     }
 }
