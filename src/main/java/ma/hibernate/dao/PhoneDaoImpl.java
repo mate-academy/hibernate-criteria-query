@@ -1,7 +1,9 @@
 package ma.hibernate.dao;
 
-import jakarta.persistence.criteria.*;
-
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 import java.util.List;
 import java.util.Map;
 import ma.hibernate.exception.DataProcessingException;
@@ -23,6 +25,7 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
             session = factory.openSession();
             transaction = session.beginTransaction();
             session.persist(phone);
+            transaction.commit();
             return phone;
         } catch (Exception e) {
             if (transaction != null) {
@@ -49,7 +52,6 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
                 generalPredicate = cb.and(generalPredicate, keyPredicate);
             }
             query.where(generalPredicate);
-
             return session.createQuery(query).getResultList();
         }
     }
