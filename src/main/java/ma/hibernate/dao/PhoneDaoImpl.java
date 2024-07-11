@@ -45,8 +45,9 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
                     })
                     .collect(Collectors.toList());
 
-            cq.where(predicates.isEmpty() ? cb.conjunction() : 
-                     cb.or(predicates.toArray(new JpaPredicate[0])));
+            if (!predicates.isEmpty()) {
+                cq.where(cb.or(predicates.toArray(new JpaPredicate[0])));
+            }
 
             Query<Phone> query = session.createQuery(cq);
             return query.getResultList();
