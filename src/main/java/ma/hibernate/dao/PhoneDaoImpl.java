@@ -3,6 +3,7 @@ package ma.hibernate.dao;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import ma.hibernate.model.Phone;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -35,15 +36,18 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
             JpaCriteriaQuery<Phone> cq = cb.createQuery(Phone.class);
             var root = cq.from(Phone.class);
 
-            JpaPredicate[] predicates = params.entrySet().stream()
+            List<JpaPredicate> predicates = params.entrySet().stream()
                 .flatMap(entry -> {
                     String key = entry.getKey();
                     String[] values = entry.getValue();
                     return Arrays.stream(values).map(value -> cb.equal(root.get(key), value));
                 })
-                .toArray(JpaPredicate[]::new);
+                .collect(Collectors.toList());
 
-            cq.where(cb.or(predicates));
+            if (!predicates.isEmpty()) {
+                cq.where(cb.or(predicates.toArray(new JpaPredicate[0])));
+            }
+
             Query<Phone> query = session.createQuery(cq);
             return query.getResultList();
         } catch (Exception e) {
