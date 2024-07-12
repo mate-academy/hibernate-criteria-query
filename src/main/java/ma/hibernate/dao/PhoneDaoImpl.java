@@ -37,12 +37,8 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
             var root = cq.from(Phone.class);
 
             List<JpaPredicate> predicates = params.entrySet().stream()
-                    .flatMap(entry -> {
-                        String key = entry.getKey();
-                        String[] values = entry.getValue();
-                        return Arrays.stream(values)
-                                .map(value -> cb.equal(root.get(key), value));
-                    })
+                    .flatMap(entry -> Arrays.stream(entry.getValue())
+                            .map(value -> cb.equal(root.get(entry.getKey()), value)))
                     .collect(Collectors.toList());
 
             if (!predicates.isEmpty()) {
