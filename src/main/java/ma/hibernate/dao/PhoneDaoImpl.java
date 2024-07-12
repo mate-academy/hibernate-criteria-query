@@ -1,6 +1,5 @@
 package ma.hibernate.dao;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -32,20 +31,17 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
     @Override
     public List<Phone> findAll(Map<String, String[]> params) {
         try (Session session = factory.openSession()) {
-            HibernateCriteriaBuilder cb = session.getCriteriaBuilder();
-            JpaCriteriaQuery<Phone> cq = cb.createQuery(Phone.class);
-            var root = cq.from(Phone.class);
+            HibernateCriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+            JpaCriteriaQuery<Phone> criteriaQuery = criteriaBuilder.createQuery(Phone.class);
+            var phoneRoot = criteriaQuery.from(Phone.class);
 
-            List<JpaPredicate> predicates = params.entrySet().stream()
-                    .flatMap(entry -> Arrays.stream(entry.getValue())
-                            .map(value -> cb.equal(root.get(entry.getKey()), value)))
-                    .collect(Collectors.toList());
+            JpaPredicate[] predicates = params.entrySet().stream()
+                    .map(entry -> phoneRoot.get(entry.getKey()).in((Object[]) entry.getValue()))
+                    .toArray(JpaPredicate[]::new);
 
-            if (!predicates.isEmpty()) {
-                cq.where(cb.or(predicates.toArray(new JpaPredicate[0])));
-            }
+            criteriaQuery.where(predicates);
 
-            Query<Phone> query = session.createQuery(cq);
+            Query<Phone> query = session.createQuery(criteriaQuery);
             return query.getResultList();
         } catch (Exception e) {
             throw new RuntimeException("Can't find phones with params " + params, e);
