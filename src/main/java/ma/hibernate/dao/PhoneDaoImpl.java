@@ -46,18 +46,21 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
 
             CriteriaBuilder.In<Object> countryManufacturedPredic =
                     cb.in(root.get("countryManufactured"));
-            for (String country : params.get("countryManufactured")) {
-                countryManufacturedPredic.value(country);
-            }
-
             CriteriaBuilder.In<Object> makerPredic = cb.in(root.get("maker"));
-            for (String maker : params.get("maker")) {
-                makerPredic.value(maker);
-            }
-
             CriteriaBuilder.In<Object> colorPredic = cb.in(root.get("color"));
-            for (String color : params.get("color")) {
-                colorPredic.value(color);
+
+            if (params.get("countryManufactured") != null) {
+                for (String country : params.get("countryManufactured")) {
+                    countryManufacturedPredic.value(country);
+                }
+            } else if (params.get("maker") != null) {
+                for (String maker : params.get("maker")) {
+                    makerPredic.value(maker);
+                }
+            } else if (params.get("color") != null) {
+                for (String color : params.get("color")) {
+                    colorPredic.value(color);
+                }
             }
 
             query.where(cb.and(countryManufacturedPredic, makerPredic, colorPredic));
