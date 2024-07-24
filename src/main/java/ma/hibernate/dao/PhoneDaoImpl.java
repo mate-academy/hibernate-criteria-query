@@ -2,6 +2,7 @@ package ma.hibernate.dao;
 
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import java.util.List;
 import java.util.Map;
@@ -44,27 +45,23 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
             CriteriaQuery<Phone> query = cb.createQuery(Phone.class);
             Root<Phone> root = query.from(Phone.class);
 
-            CriteriaBuilder.In<Object> countryManufacturedPredic =
-                    cb.in(root.get("countryManufactured"));
-            CriteriaBuilder.In<Object> makerPredic = cb.in(root.get("maker"));
-            CriteriaBuilder.In<Object> colorPredic = cb.in(root.get("color"));
+            Predicate summPredic = cb.disjunction();
 
-            if (params.get("countryManufactured") != null) {
-                for (String country : params.get("countryManufactured")) {
-                    countryManufacturedPredic.value(country);
-                }
-            } else if (params.get("maker") != null) {
-                for (String maker : params.get("maker")) {
-                    makerPredic.value(maker);
-                }
-            } else if (params.get("color") != null) {
-                for (String color : params.get("color")) {
-                    colorPredic.value(color);
+            for (Map.Entry<String, String[]> entry : params.entrySet()) {
+                String key = entry.getKey();
+                String[] values = entry.getValue();
+
+                if (values != null && values.length > 0) {
+                    Predicate keyValuePredic = root.get(key).in((Object[]) values);
+                    summPredic = cb.and(summPredic, keyValuePredic);
                 }
             }
 
-            query.where(cb.and(countryManufacturedPredic, makerPredic, colorPredic));
+            query.where(summPredic);
             return session.createQuery(query).getResultList();
+        } catch (Exception e) {
+            throw new RuntimeException("Cannot get all records by parameters: "
+                    + params.toString(), e);
         }
     }
 }
