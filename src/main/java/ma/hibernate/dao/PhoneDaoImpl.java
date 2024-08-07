@@ -53,7 +53,7 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
 
             params.forEach((k, v) -> {
                 predicates.add(criBuilder.in(phoneRoot.get(k)));
-                Arrays.stream(v).forEach(predicates.getLast()::value);
+                Arrays.stream(v).forEach(predicates.get(predicates.size() - 1)::value);
             });
             query.where(criBuilder.and(predicates.toArray(Predicate[]::new)));
             return session.createQuery(query).getResultList();
