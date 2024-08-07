@@ -1,5 +1,6 @@
 package ma.hibernate.dao;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
@@ -8,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import ma.hibernate.model.Phone;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -55,6 +57,12 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
             });
             query.where(criBuilder.and(predicates.toArray(Predicate[]::new)));
             return session.createQuery(query).getResultList();
+        } catch (Exception e) {
+            String mapToString = params.entrySet().stream()
+                    .map(entry -> entry.getKey() + " = " + Arrays.toString(entry.getValue()))
+                    .collect(Collectors.joining(", ", "{", "}"));
+            throw new EntityNotFoundException("Can't find any phones by those options: "
+                    + mapToString);
         }
     }
 }
