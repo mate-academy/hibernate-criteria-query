@@ -1,21 +1,17 @@
 package ma.hibernate.dao;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import ma.hibernate.model.Phone;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import org.hibernate.query.criteria.HibernateCriteriaBuilder;
 
 public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
     public PhoneDaoImpl(SessionFactory sessionFactory) {
@@ -55,7 +51,8 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
                     .map(entry -> phoneRoot.get(entry.getKey()).in(Arrays.asList(entry.getValue())))
                     .collect(Collectors.toList());
 
-            criteriaQuery.select(phoneRoot).where(criteriaBuilder.and(predicates.toArray(new Predicate[0])));
+            criteriaQuery.select(phoneRoot)
+                    .where(criteriaBuilder.and(predicates.toArray(new Predicate[0])));
 
             return session.createQuery(criteriaQuery).getResultList();
         }
