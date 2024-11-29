@@ -6,7 +6,12 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import ma.hibernate.model.Phone;
+import ma.hibernate.util.HibernateUtil;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -34,6 +39,22 @@ public class PhoneDaoImplTest extends AbstractTest {
     @Before
     public void setUp() {
         params = new HashMap<>();
+        cleanDatabase(); // Очищаем базу данных перед каждым тестом
+    }
+
+    @After
+    public void tearDown() {
+        cleanDatabase(); // Очищаем базу данных после каждого теста
+    }
+
+    private void cleanDatabase() {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            Transaction transaction = session.beginTransaction();
+            session.createQuery("DELETE FROM Phone").executeUpdate();
+            // session.createNativeQuery("ALTER TABLE Phone AUTO_INCREMENT = 1").executeUpdate();
+            transaction.commit();
+            System.out.println("Database cleaned and ID reset");
+        }
     }
 
     @Override
@@ -66,8 +87,8 @@ public class PhoneDaoImplTest extends AbstractTest {
         boolean isSolutionWithTwoForLoops = findAllMethodContent.split("for \\(").length <= 3;
         Assert.assertTrue(
                 "In your solution you shouldn't use more than "
-                    + MAX_NUMBER_OF_FOR_LOOPS_IN_FIND_ALL_METHOD
-                    + " for loops",
+                        + MAX_NUMBER_OF_FOR_LOOPS_IN_FIND_ALL_METHOD
+                        + " for loops",
                 isSolutionWithTwoForLoops
         );
     }
