@@ -11,7 +11,6 @@ import ma.hibernate.model.Phone;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import org.hibernate.query.Query;
 
 public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
     public PhoneDaoImpl(SessionFactory sessionFactory) {
@@ -38,24 +37,16 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
             Root<Phone> root = criteriaQuery.from(Phone.class);
 
             List<Predicate> predicates = new ArrayList<>();
-            if (params.containsKey("countryManufactured")) {
-                String[] countries = params.get("countryManufactured");
-                predicates.add(root.get("countryManufactured").in((Object[]) countries));
-
+            for (Map.Entry<String, String[]> entry : params.entrySet()) {
+                CriteriaBuilder.In<String> currentPredicate =
+                        builder.in(root.get(entry.getKey()));
+                for (String value : entry.getValue()) {
+                    currentPredicate.value(value);
+                }
+                predicates.add(currentPredicate);
             }
-            if (params.containsKey("producer")) {
-                String[] producers = params.get("producer");
-                predicates.add(root.get("producer").in((Object[]) producers));
-            }
-            if (params.containsKey("color")) {
-                String[] colors = params.get("color");
-                predicates.add(root.get("color").in((Object[]) colors));
-            }
-            criteriaQuery.where(predicates.toArray(new Predicate[0]));
-            Query<Phone> query = session.createQuery(criteriaQuery);
-            List<Phone> result = query.getResultList();
-            session.close();
-            return result;
+            criteriaQuery.where(builder.and(predicates.toArray(new Predicate[0])));
+            return session.createQuery(criteriaQuery).getResultList();
         }
     }
 }
