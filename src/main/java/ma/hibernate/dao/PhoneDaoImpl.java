@@ -1,12 +1,12 @@
 package ma.hibernate.dao;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import ma.hibernate.model.Phone;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -31,7 +31,8 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
                 transaction.rollback();
             }
             e.printStackTrace();
-            throw new RuntimeException("Can not create new phone, an error occurred." + e.getMessage(), e);
+            throw new RuntimeException("Can not create new phone, an error occurred."
+                    + e.getMessage(), e);
         } finally {
             if (session != null) {
                 session.close();
