@@ -1,10 +1,9 @@
 package ma.hibernate.dao;
 
-import java.util.ArrayList;
+import jakarta.persistence.criteria.Predicate;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-
-import jakarta.persistence.criteria.Predicate;
 import ma.hibernate.model.Phone;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -48,48 +47,17 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
             JpaCriteriaQuery<Phone> query = cb.createQuery(Phone.class);
             JpaRoot<Phone> phoneRoot = query.from(Phone.class);
 
-            List<JpaInPredicate> predicates = new ArrayList<>();
+            List<Predicate> predicates = params.entrySet().stream()
+                    .map(entry -> {
+                        Predicate predicate = cb.in(phoneRoot.get(entry.getKey()));
+                        Arrays.stream(entry.getValue())
+                                .forEach(((JpaInPredicate<String>) predicate)::value);
+                        return predicate;
+                    })
+                    .toList();
 
-            String[] countriesManufactured = params.get("countryManufactured");
-            if (countriesManufactured != null) {
-                JpaInPredicate<String> countryManufacturedPredicate = cb
-                        .in(phoneRoot.get("countryManufactured"));
-                for (String country : countriesManufactured) {
-                    countryManufacturedPredicate.value(country);
-                }
-                predicates.add(countryManufacturedPredicate);
-            }
+            query.where(cb.and(predicates.toArray(new Predicate[0])));
 
-            String[] makers = params.get("maker");
-            if (makers != null) {
-                JpaInPredicate<String> makerPredicate = cb.in(phoneRoot.get("maker"));
-                for (String maker : makers) {
-                    makerPredicate.value(maker);
-                }
-                predicates.add(makerPredicate);
-            }
-
-            String[] colors = params.get("color");
-            if (colors != null) {
-                JpaInPredicate<String> colorPredicate = cb.in(phoneRoot.get("color"));
-                for (String color : colors) {
-                    colorPredicate.value(color);
-                }
-                predicates.add(colorPredicate);
-            }
-
-            String[] models = params.get("model");
-            if (models != null) {
-                JpaInPredicate<String> modelPredicate = cb.in(phoneRoot.get("model"));
-                for (String model : models) {
-                    modelPredicate.value(model);
-                }
-                predicates.add(modelPredicate);
-            }
-
-            if (!predicates.isEmpty()) {
-                query.where(cb.and(predicates.toArray(new Predicate[0])));
-            }
             return session.createQuery(query).getResultList();
         } catch (Exception e) {
             throw new RuntimeException("Can't get all phones", e);
