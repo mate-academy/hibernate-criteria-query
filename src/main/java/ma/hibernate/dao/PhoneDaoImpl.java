@@ -4,6 +4,7 @@ import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import ma.hibernate.model.Phone;
@@ -41,22 +42,22 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
 
     @Override
     public List<Phone> findAll(Map<String, String[]> params) {
-        CriteriaBuilder cb = null;
-
         try (Session session = factory.openSession()) {
-            cb = session.getCriteriaBuilder();
+            CriteriaBuilder cb = session.getCriteriaBuilder();
             CriteriaQuery<Phone> cq = cb.createQuery(Phone.class);
             Root<Phone> root = cq.from(Phone.class);
-            Predicate predicate = cb.and();
+
+            List<Predicate> predicates = new ArrayList<>();
 
             for (Map.Entry<String, String[]> entry : params.entrySet()) {
-                CriteriaBuilder.In<Object> in = cb.in(root.get(entry.getKey()));
-                for (String s : entry.getValue()) {
-                    in.value(s);
+                CriteriaBuilder.In<String> in = cb.in(root.get(entry.getKey()));
+                for (String value : entry.getValue()) {
+                    in.value(value);
                 }
-                predicate = cb.and(predicate, in);
+                predicates.add(in);
             }
-            cq.where(predicate);
+
+            cq.where(cb.and(predicates.toArray(new Predicate[0])));
 
             return session.createQuery(cq).getResultList();
         }
