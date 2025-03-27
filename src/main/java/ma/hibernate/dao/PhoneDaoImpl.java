@@ -2,7 +2,9 @@ package ma.hibernate.dao;
 
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import ma.hibernate.model.Phone;
@@ -31,6 +33,7 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
                 session.close();
             }
         }
+
         return phone;
     }
 
@@ -40,17 +43,11 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
             CriteriaBuilder cb = session.getCriteriaBuilder();
             CriteriaQuery<Phone> criteriaQuery = cb.createQuery(Phone.class);
             Root<Phone> root = criteriaQuery.from(Phone.class);
-            CriteriaBuilder.In<String> predicateColor = cb.in(root.get("color"));
+            List<Predicate> predicateList = new ArrayList<>();
             for (Map.Entry<String, String[]> entry : params.entrySet()) {
-                predicateColor.value(entry.getKey());
+                predicateList.add(root.get(entry.getKey()).in((Object[]) entry.getValue()));
             }
-
-            CriteriaBuilder.In<String[]> predicateModel = cb.in(root.get("maker"));
-            for (Map.Entry<String, String[]> entry : params.entrySet()) {
-                predicateModel.value(entry.getValue());
-            }
-
-            criteriaQuery.where(cb.and(predicateColor, predicateModel));
+            criteriaQuery.where(cb.and(predicateList.toArray(new Predicate[0])));
             return session.createQuery(criteriaQuery).getResultList();
         }
     }
