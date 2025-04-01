@@ -4,7 +4,6 @@ import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import ma.hibernate.model.Phone;
@@ -43,23 +42,26 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
     @Override
     public List<Phone> findAll(Map<String, String[]> params) {
         try (Session session = factory.openSession()) {
-            CriteriaBuilder cb = session.getCriteriaBuilder();
-            CriteriaQuery<Phone> query = cb.createQuery(Phone.class);
-            Root<Phone> phoneRoot = query.from(Phone.class);
-            List<CriteriaBuilder.In<Object>> predicates = params.entrySet().stream()
-                    .filter(entry -> entry.getValue() != null && entry.getValue().length > 0)
-                    .map(entry -> {
-                        CriteriaBuilder.In<Object> inClause = cb.in(phoneRoot.get(entry.getKey()));
-                        Arrays.stream(entry.getValue()).forEach(inClause::value);
-                        return inClause;
-                    })
-                    .toList();
-            query.where(predicates.toArray(new Predicate[0]));
-            return session.createQuery(query).getResultList();
+            CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+            CriteriaQuery<Phone> criteriaQuery = criteriaBuilder.createQuery(Phone.class);
+            Root<Phone> root = criteriaQuery.from(Phone.class);
+            Predicate totalPredicate = criteriaBuilder.isNotNull(root.get("id"));
+            CriteriaBuilder.In<String> paramPredicate;
+            for (Map.Entry<String, String[]> entry : params.entrySet()) {
+                paramPredicate = criteriaBuilder.in(root.get(entry.getKey()));
+                for (String value : entry.getValue()) {
+                    paramPredicate.value(value);
+                }
+                totalPredicate = criteriaBuilder.and(totalPredicate == null
+                        ? paramPredicate : totalPredicate, paramPredicate);
+            }
+            criteriaQuery.where(totalPredicate);
+            return session.createQuery(criteriaQuery).list();
         } catch (Exception e) {
-            throw new RuntimeException("Error occurred while getting phones "
-                    + "from the database by following parameters: " + params, e);
+            throw new RuntimeException("Can't execute query from findAll() method for parameters: "
+                    + params.toString()
+                    + System.lineSeparator()
+                    + "Check incoming data", e);
         }
     }
-
 }
