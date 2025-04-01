@@ -7,6 +7,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Clear Cache
+        run: |
+          rm -rf ~/.m2/repository
       - uses: actions/checkout@v2
         with:
           ref: ${{github.event.pull_request.head.ref}}
