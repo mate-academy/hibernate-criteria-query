@@ -44,30 +44,28 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
         try (Session session = factory.openSession()) {
             CriteriaBuilder cb = session.getCriteriaBuilder();
             CriteriaQuery<Phone> query = cb.createQuery(Phone.class);
-            Root<Phone> phoneRoot = query.from(Phone.class);
+            Root<Phone> root = query.from(Phone.class);
 
-            List<Predicate> predicates = new ArrayList<>();
+            // Мапимо параметри до імен полів сутності Phone
+            Map<String, String> fieldMap = Map.of(
+                "countryManufactured", "countryManufactured",
+                "maker", "maker",
+                "color", "color",
+                "model", "model"
+            );
 
-            String[] countries = params.get("countryManufactured");
-            if (countries != null && countries.length > 0) {
-                predicates.add(phoneRoot.get("countryManufactured").in((Object[]) countries));
-            }
+            List<Predicate> predicates = params.entrySet().stream()
+                .map(entry -> {
+                    String fieldName = fieldMap.get(entry.getKey());
+                    String[] values = entry.getValue();
+                    return (fieldName != null && values != null && values.length > 0)
+                        ? root.get(fieldName).in((Object[]) values)
+                        : null;
+                })
+                .filter(p -> p != null)
+                .toList();
 
-            String[] makers = params.get("maker");
-            if (makers != null && makers.length > 0) {
-                predicates.add(phoneRoot.get("maker").in((Object[]) makers));
-            }
-
-            String[] colors = params.get("color");
-            if (colors != null && colors.length > 0) {
-                predicates.add(phoneRoot.get("color").in((Object[]) colors));
-            }
-
-            query.select(phoneRoot);
-            if (!predicates.isEmpty()) {
-                query.where(cb.and(predicates.toArray(new Predicate[0])));
-            }
-
+            query.select(root).where(cb.and(predicates.toArray(new Predicate[0])));
             return session.createQuery(query).getResultList();
         }
     }
