@@ -4,7 +4,6 @@ import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import ma.hibernate.model.Phone;
@@ -46,24 +45,23 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
             CriteriaQuery<Phone> query = cb.createQuery(Phone.class);
             Root<Phone> root = query.from(Phone.class);
 
-            // Мапимо параметри до імен полів сутності Phone
             Map<String, String> fieldMap = Map.of(
-                "countryManufactured", "countryManufactured",
-                "maker", "maker",
-                "color", "color",
-                "model", "model"
+                    "countryManufactured", "countryManufactured",
+                    "maker", "maker",
+                    "color", "color",
+                    "model", "model"
             );
 
             List<Predicate> predicates = params.entrySet().stream()
-                .map(entry -> {
-                    String fieldName = fieldMap.get(entry.getKey());
-                    String[] values = entry.getValue();
-                    return (fieldName != null && values != null && values.length > 0)
-                        ? root.get(fieldName).in((Object[]) values)
-                        : null;
-                })
-                .filter(p -> p != null)
-                .toList();
+                    .map(entry -> {
+                        String fieldName = fieldMap.get(entry.getKey());
+                        String[] values = entry.getValue();
+                        return (fieldName != null && values != null && values.length > 0)
+                            ? root.get(fieldName).in((Object[]) values)
+                            : null;
+                    })
+                    .filter(p -> p != null)
+                    .toList();
 
             query.select(root).where(cb.and(predicates.toArray(new Predicate[0])));
             return session.createQuery(query).getResultList();
