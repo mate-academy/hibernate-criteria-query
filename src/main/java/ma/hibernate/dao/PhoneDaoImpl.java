@@ -2,7 +2,10 @@ package ma.hibernate.dao;
 
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import ma.hibernate.model.Phone;
@@ -43,29 +46,31 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
             CriteriaBuilder cb = session.getCriteriaBuilder();
             CriteriaQuery<Phone> query = cb.createQuery(Phone.class);
             Root<Phone> phoneRoot = query.from(Phone.class);
+            List<Predicate> predicates = new ArrayList<>();
+            Map<String, CriteriaBuilder.In<String>> predicateMap = new HashMap<>();
 
             CriteriaBuilder.In<String> countryPredicate
                     = cb.in(phoneRoot.get("countryManufactured"));
-            for (Map.Entry<String, String[]> entry : params.entrySet()) {
-                countryPredicate.value(String.valueOf(entry));
-            }
-
             CriteriaBuilder.In<String> makerPredicate = cb.in(phoneRoot.get("maker"));
-            for (Map.Entry<String, String[]> entry : params.entrySet()) {
-                makerPredicate.value(String.valueOf(entry));
-            }
-
             CriteriaBuilder.In<String> colorPredicate = cb.in(phoneRoot.get("color"));
-            for (Map.Entry<String, String[]> entry : params.entrySet()) {
-                colorPredicate.value(String.valueOf(entry));
-            }
+            CriteriaBuilder.In<String> modelPredicate = cb.in(phoneRoot.get("model"));
 
-            query.where(cb.and(countryPredicate, makerPredicate, colorPredicate));
+            predicateMap.put("countryManufactured", countryPredicate);
+            predicateMap.put("maker", makerPredicate);
+            predicateMap.put("color", colorPredicate);
+            predicateMap.put("model", modelPredicate);
+
+            for (Map.Entry<String, String[]> entry : params.entrySet()) {
+                String key = entry.getKey();
+                String[] values = entry.getValue();
+                CriteriaBuilder.In<String> predicate = predicateMap.get(key);
+                for (String value : values) {
+                    predicate.value(value);
+                }
+                predicates.add(predicate);
+            }
+            query.where(cb.and(predicates.toArray(new Predicate[0])));
             return session.createQuery(query).getResultList();
         }
     }
 }
-
-
-
-
