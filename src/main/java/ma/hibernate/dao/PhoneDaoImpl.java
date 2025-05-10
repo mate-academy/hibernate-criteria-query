@@ -12,11 +12,12 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
 
     @Override
     public Phone create(Phone phone) {
-        return null;
+        super.create(phone);
+        return phone;
     }
 
     @Override
     public List<Phone> findAll(Map<String, String[]> params) {
-        return null;
+        return super.findAll(params, Phone.class);
     }
 }
