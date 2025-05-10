@@ -222,7 +222,7 @@ public class PhoneDaoImplTest extends AbstractTest {
         Assert.assertEquals(3, actualA7.size());
     }
 
-    private void insertPhones(PhoneDao phoneDao) {
+    public void insertPhones(PhoneDao phoneDao) {
         Phone iphoneX = (Phone) Phones.iphoneX.clone();
         verifyCreatePhoneWorks(phoneDao, iphoneX, 1L);
 
