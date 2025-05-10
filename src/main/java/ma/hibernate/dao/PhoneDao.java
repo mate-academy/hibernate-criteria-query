@@ -2,7 +2,7 @@ package ma.hibernate.dao;
 
 import java.util.List;
 import java.util.Map;
-import ma.hibernate.model.Phone;
+import ma.hibernate.Phone;
 
 public interface PhoneDao {
     Phone create(Phone phone);
