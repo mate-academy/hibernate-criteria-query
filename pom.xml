@@ -40,6 +40,11 @@
             <version>2.7.2</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>net.n2oapp.criteria</groupId>
+            <artifactId>criteria-api</artifactId>
+            <version>7.4.0</version>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
