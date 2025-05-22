@@ -8,4 +8,8 @@ public abstract class AbstractDao {
     protected AbstractDao(SessionFactory sessionFactory) {
         this.factory = sessionFactory;
     }
+
+    protected SessionFactory getSessionFactory() {
+        return factory;
+    }
 }
