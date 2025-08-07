@@ -3,6 +3,7 @@ package ma.hibernate.dao;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Root;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import ma.hibernate.model.Phone;
@@ -20,7 +21,7 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
         Transaction transaction = null;
         Session session = null;
         try {
-            session = factory.getCurrentSession();
+            session = factory.openSession();
             transaction = session.beginTransaction();
             session.persist(phone);
             transaction.commit();
@@ -40,30 +41,21 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
 
     @Override
     public List<Phone> findAll(Map<String, String[]> params) {
-        try (Session session = factory.getCurrentSession()) {
+        try (Session session = factory.openSession()) {
             CriteriaBuilder cb = session.getCriteriaBuilder();
             CriteriaQuery<Phone> query = cb.createQuery(Phone.class);
             Root<Phone> phoneRoot = query.from(Phone.class);
-            CriteriaBuilder.In<String> countryManufacturedPredicate =
-                    cb.in(phoneRoot.get("countryManufactured"));
-            for (String country : params.get("countryManufactured")) {
-                countryManufacturedPredicate.value(country);
-            }
-            CriteriaBuilder.In<String> producersPredicate = cb.in(phoneRoot.get("producer"));
-            for (String producer : params.get("producer")) {
-                producersPredicate.value(producer);
-            }
-            CriteriaBuilder.In<String> colorsPredicate = cb.in(phoneRoot.get("color"));
-            for (String color : params.get("color")) {
-                colorsPredicate.value(color);
+            List<jakarta.persistence.criteria.Predicate> predicates = new ArrayList<>();
+
+            for (Map.Entry<String, String[]> entry : params.entrySet()) {
+                CriteriaBuilder.In<String> inClause = cb.in(phoneRoot.get(entry.getKey()));
+                for (String value : entry.getValue()) {
+                    inClause.value(value);
+                }
+                predicates.add(inClause);
             }
 
-            for (String key : params.keySet()) {
-                if (key.equals("countryManufactured")) {
-                    params.get(key)
-                }
-            }
-            query.where(cb.and(countryManufacturedPredicate, producersPredicate, colorsPredicate));
+            query.where(cb.and(predicates.toArray(new jakarta.persistence.criteria.Predicate[0])));
             return session.createQuery(query).getResultList();
 
         }
