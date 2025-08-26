@@ -1,9 +1,18 @@
 package ma.hibernate.dao;
 
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import ma.hibernate.exception.DataProcessingException;
 import ma.hibernate.model.Phone;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 
 public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
     public PhoneDaoImpl(SessionFactory sessionFactory) {
@@ -12,11 +21,48 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
 
     @Override
     public Phone create(Phone phone) {
-        return null;
+        Session session = null;
+        Transaction transaction = null;
+        try {
+            session = factory.openSession();
+            transaction = session.beginTransaction();
+            session.persist(phone);
+            transaction.commit();
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            throw new DataProcessingException("Can't save phone " + phone + " to DB", e);
+        } finally {
+            if (session != null) {
+                session.close();
+            }
+        }
+        return phone;
     }
 
     @Override
     public List<Phone> findAll(Map<String, String[]> params) {
-        return null;
+        try (Session session = factory.openSession()) {
+            CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+            CriteriaQuery<Phone> phoneQuery = criteriaBuilder.createQuery(Phone.class);
+            Root<Phone> phoneRoot = phoneQuery.from(Phone.class);
+            Predicate generalPredicate = criteriaBuilder.and();
+            for (Map.Entry<String, String[]> entry : params.entrySet()) {
+                Predicate phonePredicate = phoneRoot.get(entry.getKey())
+                        .in((Object[]) entry.getValue());
+                generalPredicate = criteriaBuilder
+                        .and(phonePredicate, generalPredicate);
+            }
+            return session.createQuery(phoneQuery
+                    .where(generalPredicate)).getResultList();
+        } catch (Exception e) {
+            String parameters = params.entrySet().stream()
+                    .map(entry -> entry.getKey() + " "
+                            + Arrays.toString(entry.getValue()))
+                    .collect(Collectors.joining(", "));
+            throw new DataProcessingException("Can't find all phones from DB with next parameters: "
+                    + parameters, e);
+        }
     }
 }
