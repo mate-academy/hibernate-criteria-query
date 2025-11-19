@@ -42,15 +42,13 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
 
     @Override
     public List<Phone> findAll(Map<String, String[]> params) {
-        if (params == null) {
-            return findAll(Map.of());
-        }
         try (Session session = factory.openSession()) {
             HibernateCriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
             CriteriaQuery<Phone> query = criteriaBuilder.createQuery(Phone.class);
             Root<Phone> root = query.from(Phone.class);
             record Entry(Path<Object> path, String[] options) {
             }
+
             Optional<Predicate> predicate = params.entrySet().stream()
                     .map(entry -> new Entry(root.get(entry.getKey()), entry.getValue()))
                     .map(entry -> entry.path().in((Object[]) entry.options()))
