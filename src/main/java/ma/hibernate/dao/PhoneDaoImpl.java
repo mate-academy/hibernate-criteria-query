@@ -5,12 +5,12 @@ import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import ma.hibernate.model.Phone;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 
 public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
     public PhoneDaoImpl(SessionFactory sessionFactory) {
@@ -40,7 +40,7 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
 
     @Override
     public List<Phone> findAll(Map<String, String[]> params) {
-        try(Session session = factory.openSession()) {
+        try (Session session = factory.openSession()) {
             CriteriaBuilder cb = session.getCriteriaBuilder();
             CriteriaQuery<Phone> cq = cb.createQuery(Phone.class);
             Root<Phone> root = cq.from(Phone.class);
