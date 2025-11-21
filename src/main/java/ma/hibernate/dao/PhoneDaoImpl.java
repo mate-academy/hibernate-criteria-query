@@ -1,8 +1,5 @@
 package ma.hibernate.dao;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
@@ -11,6 +8,9 @@ import ma.hibernate.model.Phone;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
     public PhoneDaoImpl(SessionFactory sessionFactory) {
@@ -47,7 +47,7 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
 
             List<Predicate> predicates = new ArrayList<>();
 
-            for  (Map.Entry<String, String[]> entry : params.entrySet()) {
+            for (Map.Entry<String, String[]> entry : params.entrySet()) {
                 String field = entry.getKey();
                 String[] values = entry.getValue();
 
