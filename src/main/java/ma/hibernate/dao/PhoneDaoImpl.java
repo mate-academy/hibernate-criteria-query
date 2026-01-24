@@ -2,6 +2,7 @@ package ma.hibernate.dao;
 
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import java.util.List;
 import java.util.Map;
@@ -39,41 +40,16 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
 
     @Override
     public List<Phone> findAll(Map<String, String[]> params) {
-        Session session = null;
-
-        String[] countryManufactured = params.get("countryManufactured");
-        String[] makers = params.get("maker");
-        String[] colors = params.get("color");
-        try {
-            session = super.factory.openSession();
-            CriteriaBuilder builder = session.getCriteriaBuilder();
-            CriteriaQuery<Phone> query = builder.createQuery(Phone.class);
+        try (Session session = factory.openSession()) {
+            CriteriaBuilder criteriaBuilder = factory.getCriteriaBuilder();
+            CriteriaQuery<Phone> query = criteriaBuilder.createQuery(Phone.class);
             Root<Phone> root = query.from(Phone.class);
-
-            CriteriaBuilder.In<String> countryPredicate = builder.in(
-                    root.get("countryManufactured"));
-            for (String country : countryManufactured) {
-                countryPredicate.value(country);
-            }
-
-            CriteriaBuilder.In<String> makerPredicate = builder.in(root.get("maker"));
-            for (String maker : makers) {
-                makerPredicate.value(maker);
-            }
-
-            CriteriaBuilder.In<String> colorPredicate = builder.in(root.get("color"));
-            for (String color : colors) {
-                colorPredicate.value(color);
-            }
-
-            query.where(builder.and(countryPredicate, makerPredicate, colorPredicate));
+            Predicate[] predicates = params.entrySet().stream()
+                    .filter(entry -> entry.getValue() != null && entry.getValue().length > 0)
+                    .map(entry -> root.get(entry.getKey()).in((Object[]) entry.getValue()))
+                    .toArray(Predicate[]::new);
+            query.where(criteriaBuilder.and(predicates));
             return session.createQuery(query).getResultList();
-        } catch (Exception e) {
-            throw new RuntimeException("Can't find any phone.", e);
-        } finally {
-            if (session != null) {
-                session.close();
-            }
         }
     }
 }
