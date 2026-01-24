@@ -25,11 +25,11 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
             session.persist(phone);
             transaction.commit();
             return phone;
-        } catch(Exception e) {
+        } catch (Exception e) {
             if (transaction != null) {
                 transaction.rollback();
             }
-            throw new RuntimeException("Can't add phone:" + phone, e);
+            throw new RuntimeException("Can't create phone: " + phone, e);
         } finally {
             if (session != null) {
                 session.close();
@@ -68,7 +68,7 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
 
             query.where(builder.and(countryPredicate, makerPredicate, colorPredicate));
             return session.createQuery(query).getResultList();
-        } catch(Exception e) {
+        } catch (Exception e) {
             throw new RuntimeException("Can't find any phone.", e);
         } finally {
             if (session != null) {
