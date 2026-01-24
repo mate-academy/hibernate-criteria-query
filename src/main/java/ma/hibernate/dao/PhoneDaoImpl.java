@@ -1,15 +1,14 @@
 package ma.hibernate.dao;
 
-import java.util.List;
-import java.util.Map;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Root;
+import java.util.List;
+import java.util.Map;
 import ma.hibernate.model.Phone;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import org.hibernate.sql.ast.tree.predicate.Predicate;
 
 public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
     public PhoneDaoImpl(SessionFactory sessionFactory) {
@@ -20,13 +19,13 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
     public Phone create(Phone phone) {
         Session session = null;
         Transaction transaction = null;
-        try{
+        try {
             session = super.factory.openSession();
             transaction = session.beginTransaction();
             session.persist(phone);
             transaction.commit();
             return phone;
-        } catch(Exception e){
+        } catch(Exception e) {
             if (transaction != null) {
                 transaction.rollback();
             }
@@ -45,13 +44,14 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
         String[] countryManufactured = params.get("countryManufactured");
         String[] makers = params.get("maker");
         String[] colors = params.get("color");
-        try{
+        try {
             session = super.factory.openSession();
             CriteriaBuilder builder = session.getCriteriaBuilder();
             CriteriaQuery<Phone> query = builder.createQuery(Phone.class);
             Root<Phone> root = query.from(Phone.class);
 
-            CriteriaBuilder.In<String> countryPredicate = builder.in(root.get("countryManufactured"));
+            CriteriaBuilder.In<String> countryPredicate = builder.in(
+                    root.get("countryManufactured"));
             for (String country : countryManufactured) {
                 countryPredicate.value(country);
             }
@@ -68,7 +68,7 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
 
             query.where(builder.and(countryPredicate, makerPredicate, colorPredicate));
             return session.createQuery(query).getResultList();
-        } catch(Exception e){
+        } catch(Exception e) {
             throw new RuntimeException("Can't find any phone.", e);
         } finally {
             if (session != null) {
