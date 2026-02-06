@@ -3,9 +3,13 @@ package ma.hibernate.dao;
 import org.hibernate.SessionFactory;
 
 public abstract class AbstractDao {
-    protected final SessionFactory factory;
+    private final SessionFactory sessionFactory;
 
     protected AbstractDao(SessionFactory sessionFactory) {
-        this.factory = sessionFactory;
+        this.sessionFactory = sessionFactory;
+    }
+
+    protected SessionFactory getSessionFactory() {
+        return sessionFactory;
     }
 }
