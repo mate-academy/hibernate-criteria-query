@@ -1,38 +1,31 @@
 package ma.hibernate.dao;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import ma.hibernate.model.Phone;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import ma.hibernate.model.Phone;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 
 public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
+    private static final Map<String, String> FIELD_NAMES = Map.of("producer", "maker");
+
     public PhoneDaoImpl(SessionFactory sessionFactory) {
         super(sessionFactory);
     }
 
     @Override
     public Phone create(Phone phone) {
-        Transaction transaction = null;
-
         try (Session session = factory.openSession()) {
-            transaction = session.beginTransaction();
-
+            Transaction transaction = session.beginTransaction();
             session.persist(phone);
-
             transaction.commit();
             return phone;
-        } catch (Exception e) {
-            if (transaction != null) {
-                transaction.rollback();
-            }
-            throw e;
         }
     }
 
@@ -43,32 +36,20 @@ public class PhoneDaoImpl extends AbstractDao implements PhoneDao {
             CriteriaQuery<Phone> criteriaQuery = criteriaBuilder.createQuery(Phone.class);
             Root<Phone> root = criteriaQuery.from(Phone.class);
 
-            List<Predicate> predicates = new ArrayList<>();
+            List<Predicate> predicates = params.entrySet().stream()
+                    .filter(entry -> entry.getValue() != null && entry.getValue().length > 0)
+                    .map(entry -> root.get(getFieldName(entry.getKey()))
+                            .in((Object[]) entry.getValue()))
+                    .collect(Collectors.toList());
 
-            for (Map.Entry<String, String[]> entry : params.entrySet()) {
-                String fieldName = getFieldName(entry.getKey());
-                String[] values = entry.getValue();
-
-                if (values == null || values.length == 0) {
-                    continue;
-                }
-
-                predicates.add(root.get(fieldName).in((Object[]) values));
-            }
-
-            criteriaQuery.select(root);
-
-            if (!predicates.isEmpty()) {
-                criteriaQuery.where(criteriaBuilder.and(predicates.toArray(new Predicate[0])));
-            }
+            criteriaQuery.select(root)
+                    .where(predicates.toArray(new Predicate[0]));
 
             return session.createQuery(criteriaQuery).getResultList();
         }
     }
+
     private String getFieldName(String paramName) {
-        if ("producer".equals(paramName)) {
-            return "maker";
-        }
-        return paramName;
+        return FIELD_NAMES.getOrDefault(paramName, paramName);
     }
 }
