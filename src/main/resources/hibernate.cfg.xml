@@ -8,8 +8,6 @@
         <property name="hibernate.show_sql">true</property>
         <property name="hbm2ddl.auto">create-drop</property>
 
-        <mapping class="mate.academy.hibernate.relations.model.Country"/>
-        <mapping class="mate.academy.hibernate.relations.model.Actor"/>
-        <mapping class="mate.academy.hibernate.relations.model.Movie"/>
+        <mapping class="ma.hibernate.model.Phone"/>
     </session-factory>
 </hibernate-configuration>
