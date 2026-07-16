@@ -1,3 +1,7 @@
+show tables;
+
+select * from phones;
+
 CREATE SCHEMA `criteria_query_hw` DEFAULT CHARACTER SET utf8;
 
 USE `criteria_query_hw`;
@@ -133,3 +137,55 @@ INSERT INTO `criteria_query_hw`.`phones_features` (`phone_id`, `feature_id`) VAL
 INSERT INTO `criteria_query_hw`.`phones_features` (`phone_id`, `feature_id`) VALUES ('19', '2');
 INSERT INTO `criteria_query_hw`.`phones_features` (`phone_id`, `feature_id`) VALUES ('19', '3');
 INSERT INTO `criteria_query_hw`.`phones_features` (`phone_id`, `feature_id`) VALUES ('19', '4');
+
+INSERT INTO `criteria_query_hw`.`phones` (`producer_id`, `price`, `model`, `color`) VALUES ('1', '1000', 'XL', 'RED');
+INSERT INTO `criteria_query_hw`.`phones` (`producer_id`, `price`, `model`, `color`) VALUES ('2', '2010', 'Phone 123', 'BLACK');
+INSERT INTO `criteria_query_hw`.`phones` (`producer_id`, `price`, `model`, `color`) VALUES ('2', '800', 'Phone 012', 'YELLOW');
+INSERT INTO `criteria_query_hw`.`phones` (`producer_id`, `price`, `model`, `color`) VALUES ('1', '1100', 'Phone 012', 'WHITE');
+INSERT INTO `criteria_query_hw`.`phones` (`producer_id`, `price`, `model`, `color`) VALUES ('5', '2010', 'Phone 145', 'BLACK');
+INSERT INTO `criteria_query_hw`.`phones` (`producer_id`, `price`, `model`, `color`) VALUES ('3', '800', 'Phone 199', 'YELLOW');
+INSERT INTO `criteria_query_hw`.`phones` (`producer_id`, `price`, `model`, `color`) VALUES ('1', '1000', 'Phone 229', 'RED');
+INSERT INTO `criteria_query_hw`.`phones` (`producer_id`, `price`, `model`, `color`) VALUES ('3', '2010', 'Phone 199', 'BLACK');
+INSERT INTO `criteria_query_hw`.`phones` (`producer_id`, `price`, `model`, `color`) VALUES ('4', '800', 'Phone 177', 'YELLOW');
+INSERT INTO `criteria_query_hw`.`phones` (`producer_id`, `price`, `model`, `color`) VALUES ('1', '1310', 'Phone 116', 'RED');
+INSERT INTO `criteria_query_hw`.`phones` (`producer_id`, `price`, `model`, `color`) VALUES ('2', '2010', 'Phone 019', 'WHITE');
+INSERT INTO `criteria_query_hw`.`phones` (`producer_id`, `price`, `model`, `color`) VALUES ('2', '800', 'Phone 212', 'YELLOW');
+INSERT INTO `criteria_query_hw`.`phones` (`producer_id`, `price`, `model`, `color`) VALUES ('4', '100', 'Phone 229', 'YELLOW');
+INSERT INTO `criteria_query_hw`.`phones` (`producer_id`, `price`, `model`, `color`) VALUES ('1', '210', 'Phone 196', 'RED');
+INSERT INTO `criteria_query_hw`.`phones` (`producer_id`, `price`, `model`, `color`) VALUES ('2', '10500', 'Phone 219', 'WHITE');
+INSERT INTO `criteria_query_hw`.`phones` (`producer_id`, `price`, `model`, `color`) VALUES ('6', '800', 'Phone 312', 'YELLOW');
+INSERT INTO `criteria_query_hw`.`phones` (`producer_id`, `price`, `model`, `color`) VALUES ('6', '800', 'Phone 229', 'WHITE');
+INSERT INTO `criteria_query_hw`.`phones` (`producer_id`, `price`, `model`, `color`) VALUES ('6', '800', 'Phone 153', 'RED');
+INSERT INTO `criteria_query_hw`.`phones` (`producer_id`, `price`, `model`, `color`) VALUES ('6', '900', 'Phone 150', 'RED');
+
+
+select phones.id, producers.name from producers inner join phones on producers.id = phones.producer_id order by phones.id;
+
+select maker from phones;
+
+update phones set phones.maker = 'Apple' where phones.id = 1;
+
+update phones set phones.maker = 'Apple' where id = 1;
+update phones set phones.maker = 'Nokia' where id = 2;
+update phones set phones.maker = 'Nokia' where id = 3;
+update phones set phones.maker = 'Apple' where id = 4;
+update phones set phones.maker = 'Xiaomi' where id = 5;
+update phones set phones.maker = 'Samsung' where id = 6;
+update phones set phones.maker = 'Apple' where id = 7;
+update phones set phones.maker = 'Samsung' where id = 8;
+update phones set phones.maker = 'Oppo' where id = 9;
+update phones set phones.maker = 'Apple' where id = 10;
+update phones set phones.maker = 'Nokia' where id = 11;
+update phones set phones.maker = 'Nokia' where id = 12;
+update phones set phones.maker = 'Oppo' where id = 13;
+update phones set phones.maker = 'Apple' where id = 14;
+update phones set phones.maker = 'Nokia' where id = 15;
+update phones set phones.maker = 'LG' where id = 16;
+update phones set phones.maker = 'LG' where id = 17;
+update phones set phones.maker = 'LG' where id = 18;
+update phones set phones.maker = 'LG' where id = 19;
+
+
+UPDATE phones set countryManufactured = 'USA' where phones.id in (2, 3, 6, 11, 18, 19);
+
+select * from phones;
