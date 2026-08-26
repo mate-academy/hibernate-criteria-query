@@ -1,3 +1,8 @@
+exception/
+ util/
+ resources/
+ hibernate.cfg.xml
+ Main.java
 .idea/*
 *.iml
 target/*
