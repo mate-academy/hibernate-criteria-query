@@ -16,6 +16,17 @@ public class Phone implements Cloneable {
     private String os;
     private String countryManufactured;
 
+    public Phone() {
+    }
+
+    public Phone(String model, String maker, String color, String os, String countryManufactured) {
+        this.model = model;
+        this.maker = maker;
+        this.color = color;
+        this.os = os;
+        this.countryManufactured = countryManufactured;
+    }
+
     public Long getId() {
         return id;
     }
