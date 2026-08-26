@@ -15,3 +15,6 @@ params.put("color", new String[]{"white", "red"};
 You need to find all phones that match the specified parameters.
 
 #### [Try to avoid these common mistakes, while solving the task](./checklist.md)
+
+
+`mvn -DskipTests=false clean package`
