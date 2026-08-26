@@ -40,6 +40,11 @@
             <version>2.7.2</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <version>6.4.4.Final</version>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
