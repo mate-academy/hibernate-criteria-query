@@ -16,6 +16,15 @@ public class Phone implements Cloneable {
     private String os;
     private String countryManufactured;
 
+    public Phone() {
+    }
+
+    public Phone(String countryManufactured, String maker, String color) {
+        this.countryManufactured = countryManufactured;
+        this.maker = maker;
+        this.color = color;
+    }
+
     public Long getId() {
         return id;
     }
@@ -76,12 +85,12 @@ public class Phone implements Cloneable {
     @Override
     public String toString() {
         return "Phone{"
-            + "id=" + id
-            + ", model='" + model + '\''
-            + ", maker='" + maker + '\''
-            + ", color='" + color + '\''
-            + ", os='" + os + '\''
-            + ", countryManufactured='" + countryManufactured + '\''
-            + '}';
+                + "id=" + id
+                + ", model='" + model + '\''
+                + ", maker='" + maker + '\''
+                + ", color='" + color + '\''
+                + ", os='" + os + '\''
+                + ", countryManufactured='" + countryManufactured + '\''
+                + '}';
     }
 }
