@@ -223,28 +223,28 @@ public class PhoneDaoImplTest extends AbstractTest {
     }
 
     private void insertPhones(PhoneDao phoneDao) {
-        Phone iphoneX = (Phone) Phones.iphoneX.clone();
+        Phone iphoneX = (Phone) Phones.IPHONE_X.clone();
         verifyCreatePhoneWorks(phoneDao, iphoneX, 1L);
 
-        Phone iphone7 = (Phone) Phones.iphone7.clone();
+        Phone iphone7 = (Phone) Phones.IPHONE_7.clone();
         verifyCreatePhoneWorks(phoneDao, iphone7, 2L);
 
-        Phone samsungA5 = (Phone) Phones.samsungA5.clone();
+        Phone samsungA5 = (Phone) Phones.SAMSUNG_A_5.clone();
         verifyCreatePhoneWorks(phoneDao, samsungA5, 3L);
 
-        Phone samsungA7White = (Phone) Phones.samsungA7White.clone();
+        Phone samsungA7White = (Phone) Phones.SAMSUNG_A_7_WHITE.clone();
         verifyCreatePhoneWorks(phoneDao, samsungA7White, 4L);
 
-        Phone samsungA7Red = (Phone) Phones.samsungA7Red.clone();
+        Phone samsungA7Red = (Phone) Phones.SAMSUNG_A_7_RED.clone();
         verifyCreatePhoneWorks(phoneDao, samsungA7Red, 5L);
 
-        Phone samsungA7Black = (Phone) Phones.samsungA7Black.clone();
+        Phone samsungA7Black = (Phone) Phones.SAMSUNG_A_7_BLACK.clone();
         verifyCreatePhoneWorks(phoneDao, samsungA7Black, 6L);
 
-        Phone oppo10white = (Phone) Phones.oppo10white.clone();
+        Phone oppo10white = (Phone) Phones.OPPO_10_WHITE.clone();
         verifyCreatePhoneWorks(phoneDao, oppo10white, 7L);
 
-        Phone xiaomiRedmi5 = (Phone) Phones.xiaomiRedmi5.clone();
+        Phone xiaomiRedmi5 = (Phone) Phones.XIAOMI_REDMI_5.clone();
         verifyCreatePhoneWorks(phoneDao, xiaomiRedmi5, 8L);
     }
 
@@ -257,5 +257,4 @@ public class PhoneDaoImplTest extends AbstractTest {
         Assert.assertEquals(phone.getModel(), actual.getModel());
         Assert.assertEquals(phone.getCountryManufactured(), actual.getCountryManufactured());
     }
-
 }
