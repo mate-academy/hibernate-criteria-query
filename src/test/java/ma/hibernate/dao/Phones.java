@@ -1,6 +1,6 @@
 package ma.hibernate.dao;
 
-import ma.hibernate.model.Phone;
+import ma.hibernate.Phone;
 
 public class Phones {
     public static final Phone iphoneX = new Phone();

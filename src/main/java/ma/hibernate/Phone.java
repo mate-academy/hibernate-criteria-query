@@ -1,4 +1,4 @@
-package ma.hibernate.model;
+package ma.hibernate;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
